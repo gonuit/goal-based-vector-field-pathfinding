@@ -1,9 +1,11 @@
 import { Point } from "./point";
+import { ForceVector } from "./forceVector";
 
 export interface BoxConfig {
   distance?: number;
   visited?: boolean;
   position: Point;
+  forceVector?: ForceVector;
 }
 
 export class Box {
@@ -12,7 +14,13 @@ export class Box {
   public position: Point;
   public graphicsObject: Phaser.GameObjects.Graphics;
   public bitmapText: Phaser.GameObjects.BitmapText;
-  constructor({ distance = 0, position, visited = false }: BoxConfig) {
+  private _forceVector: ForceVector;
+  constructor({
+    distance = 0,
+    position,
+    visited = false,
+    forceVector = new ForceVector(0, 0)
+  }: BoxConfig) {
     this._distance = distance;
     this._visited = visited;
     this.position = position;
@@ -47,6 +55,11 @@ export class Box {
       this.bitmapText.destroy();
       this.bitmapText = undefined;
     }
+  }
+
+  public removeGraphicObject() {
+    this.graphicsObject.destroy();
+    this.graphicsObject = undefined;
   }
 
   public removeBitmap() {

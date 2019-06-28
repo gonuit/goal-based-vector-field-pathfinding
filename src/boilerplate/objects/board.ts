@@ -224,6 +224,7 @@ export class Board {
   };
 
   public calculateBoxesDistance = (goalPosition: Point): Board => {
+    this.reset()
     this.setGoalDistance(goalPosition);
     this.calculateDistance(goalPosition);
     return this;

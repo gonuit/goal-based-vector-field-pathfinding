@@ -2,6 +2,7 @@ import { Snake } from "../objects/snake";
 import { Board } from "../objects/board";
 import { Point } from "../objects/point";
 import { Particle } from "../objects/particle";
+import { ParticleManager } from "../objects/particleManager";
 
 export class GameScene extends Phaser.Scene {
   // field and game setting
@@ -22,6 +23,7 @@ export class GameScene extends Phaser.Scene {
   private validBoard: Board;
   private colisionBoard: Board;
 
+  private particleManager: ParticleManager
   private particle: Particle;
 
   // texts
@@ -84,6 +86,11 @@ export class GameScene extends Phaser.Scene {
     this.particle = new Particle(this, {
       initialPosition: new Point(100, 100)
     });
+
+    this.particleManager = new ParticleManager(this, {
+      amount: 10,
+      initialPosition: new Point(100, 100)
+    });
   }
 
   update(time): void {
@@ -94,11 +101,11 @@ export class GameScene extends Phaser.Scene {
     const boxExist = this.validBoard.exist(hoverBoxPosition);
     if (boxExist && !this.validBoard.goalPosition.equals(hoverBoxPosition)) {
       this.validBoard = this.validBoard
-        .reset()
         .calculateBoxesDistance(hoverBoxPosition)
         .render(this.add, { withDistance: true, colorByDistance: true });
     }
-    this.particle.move(new Point(mouseX, mouseY));
+    this.particle.absoluteMoveTo(new Point(mouseX, mouseY));
+    this.particleManager.moveByPath(this.validBoard)
     // if (this.tick === 0) {
     //   this.tick = time;
     // }
