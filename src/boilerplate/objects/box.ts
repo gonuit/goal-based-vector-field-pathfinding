@@ -5,15 +5,42 @@ export interface Cords {
 
 export interface BoxConfig {
   distance?: number;
+  visited?: boolean;
   position: Cords;
 }
 
 export class Box {
-  public distance: number;
+  private _distance: number;
+  private _visited: boolean;
   public position: Cords;
-  public graphicsObject: Phaser.GameObjects.Graphics
-  constructor({ distance = 0, position }: BoxConfig) {
-    this.distance = distance;
+  public graphicsObject: Phaser.GameObjects.Graphics;
+  constructor({ distance = 0, position, visited = false }: BoxConfig) {
+    this._distance = distance;
+    this._visited = visited;
     this.position = position;
+  }
+
+  public set distance(value: number) {
+    this._distance = value;
+  }
+  public get distance() {
+    return this._distance;
+  }
+
+  public set visited(value: boolean) {
+    this._visited = value;
+  }
+
+  public get visited() {
+    return this._visited;
+  }
+
+  public reset() {
+    this._visited = false;
+    this._distance = 0;
+    if (this.graphicsObject) {
+      this.graphicsObject.destroy();
+      this.graphicsObject = undefined;
+    }
   }
 }

@@ -27,6 +27,5 @@ export class Game extends Phaser.Game {
 
 window.addEventListener("load", () => {
   const  { offsetHeight: height, offsetWidth: width } = document.getElementById('game')
-  console.log(width, height)
   const game = new Game({...config, width, height });
 });

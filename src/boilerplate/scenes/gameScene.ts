@@ -1,4 +1,3 @@
-import { Apple } from "../objects/apple";
 import { Snake } from "../objects/snake";
 import { CONST } from "../const/const";
 import { Board } from "../objects/board";
@@ -16,7 +15,6 @@ export class GameScene extends Phaser.Scene {
 
   // objects
   private player: Snake;
-  private apple: Apple;
   private gameBorder: Phaser.GameObjects.Graphics[];
 
   private fullBoard: Board;
@@ -33,7 +31,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   init(): void {
-    this.fieldSize = 20;
+    this.fieldSize = 40;
     this.gameHeight = this.sys.canvas.height;
     this.gameWidth = this.sys.canvas.width;
     this.boardWidth = this.gameWidth - 2 * this.fieldSize;
@@ -62,12 +60,19 @@ export class GameScene extends Phaser.Scene {
         { x: 10, y: 12 },
         { x: 10, y: 13 }
       ]
-    }).render(this.add, { color: { r: 255, a: 1, g: 0, b: 0 } });
-
+    })
+      .render(this.add, { color: { r: 255, a: 1, g: 0, b: 0 } });
 
     this.validBoard = this.fullBoard
       .removeFromBoard(this.colisionBoard)
-      .render(this.add, { withDistance: true, randomColors: true });
+      .calculateBoxesDistance({ x: 13, y: 0 })
+      .reset()
+      .calculateBoxesDistance({ x: 13, y: 13 })
+      .reset()
+      .calculateBoxesDistance({ x: 13, y: 0 })
+      .reset()
+      .calculateBoxesDistance({ x: 13, y: 13 })
+      .render(this.add, { withDistance: true, colorByDistance: true });
 
     // this.player = new Snake(this);
 
