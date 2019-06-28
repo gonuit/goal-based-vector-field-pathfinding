@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "ES2016",
+    "module": "CommonJS",
+    "sourceMap": true,
+    "noImplicitAny": false,
+    "strict": false,
+    "lib": [
+      "esnext",
+      "es2015",
+      "es2016",
+      "es2017",
+      "es2018",
+      "es2019",
+      "dom"
+    ]
+   
+  }
+}
