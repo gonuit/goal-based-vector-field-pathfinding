@@ -8,9 +8,9 @@ export class BootScene extends Phaser.Scene {
 
   preload(): void {
     this.load.bitmapFont(
-      "snakeFont",
-      "./src/games/snake/assets/font/snakeFont.png",
-      "./src/games/snake/assets/font/snakeFont.fnt"
+      "mainFont",
+      "./src/boilerplate/assets/font/font.png",
+      "./src/boilerplate/assets/font/font.fnt"
     );
   }
 

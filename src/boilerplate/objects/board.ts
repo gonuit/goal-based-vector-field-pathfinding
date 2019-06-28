@@ -132,7 +132,7 @@ export class Board {
         box.bitmapText = factory.bitmapText(
           boxXposition + centerAlign,
           boxYposition + centerAlign,
-          "snakeFont",
+          "mainFont",
           box.distance.toString(),
           8
         );
