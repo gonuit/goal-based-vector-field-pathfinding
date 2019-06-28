@@ -1,6 +1,7 @@
 import { Snake } from "../objects/snake";
 import { Board } from "../objects/board";
 import { Point } from "../objects/point";
+import { Particle } from "../objects/particle";
 
 export class GameScene extends Phaser.Scene {
   // field and game setting
@@ -20,6 +21,8 @@ export class GameScene extends Phaser.Scene {
   private fullBoard: Board;
   private validBoard: Board;
   private colisionBoard: Board;
+
+  private particle: Particle;
 
   // texts
   private scoreText: Phaser.GameObjects.BitmapText;
@@ -54,42 +57,48 @@ export class GameScene extends Phaser.Scene {
       boxSize: this.fieldSize,
       initAll: false,
       positionsToFill: [
-        new Point(10,1),
-        new Point(10,2),
-        new Point(10,3),
-        new Point(10,4),
-        new Point(10,5),
-        new Point(10,6),
-        new Point(10,7),
-        new Point(10,8),
-        new Point(10,9),
-        new Point(10,10),
-        new Point(10,11),
-        new Point(10,12),
-        new Point(10,13),
-        new Point(10,14),
-        new Point(10,15),
-        new Point(10,16),
-        new Point(10,17),
-        new Point(10,18),
-        new Point(10,19),
+        new Point(10, 1),
+        new Point(10, 2),
+        new Point(10, 3),
+        new Point(10, 4),
+        new Point(10, 5),
+        new Point(10, 6),
+        new Point(10, 7),
+        new Point(10, 8),
+        new Point(10, 9),
+        new Point(10, 10),
+        new Point(10, 11),
+        new Point(10, 12),
+        new Point(10, 13),
+        new Point(10, 14),
+        new Point(10, 15),
+        new Point(10, 16),
+        new Point(10, 17),
+        new Point(10, 18),
+        new Point(10, 19)
       ]
     }).render(this.add, { color: { r: 255, a: 1, g: 0, b: 0 } });
 
-    this.validBoard = this.fullBoard
-      .removeFromBoard(this.colisionBoard)
+    this.validBoard = this.fullBoard.removeFromBoard(this.colisionBoard);
+
+    this.particle = new Particle(this, {
+      initialPosition: new Point(100, 100)
+    });
   }
 
   update(time): void {
-    const { x: mouseX, y: mouseY } = this.input.mousePointer
-    const hoverBoxPosition: Point = this.validBoard.getBoxPositionByDimensions(new Point(mouseX, mouseY))
-    const boxExist = this.validBoard.exist(hoverBoxPosition)
-    if(boxExist && !this.validBoard.goalPosition.equals(hoverBoxPosition)) {
+    const { x: mouseX, y: mouseY } = this.input.mousePointer;
+    const hoverBoxPosition: Point = this.validBoard.getBoxPositionByDimensions(
+      new Point(mouseX, mouseY)
+    );
+    const boxExist = this.validBoard.exist(hoverBoxPosition);
+    if (boxExist && !this.validBoard.goalPosition.equals(hoverBoxPosition)) {
       this.validBoard = this.validBoard
-      .reset()
-      .calculateBoxesDistance(hoverBoxPosition)
-      .render(this.add, { withDistance: true, colorByDistance: true });
+        .reset()
+        .calculateBoxesDistance(hoverBoxPosition)
+        .render(this.add, { withDistance: true, colorByDistance: true });
     }
+    this.particle.move(new Point(mouseX, mouseY));
     // if (this.tick === 0) {
     //   this.tick = time;
     // }
