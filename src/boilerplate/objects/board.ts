@@ -103,7 +103,7 @@ export class Board {
       const boxXposition = -this.boxSize + x * this.boxSize;
       const boxYposition = -this.boxSize + y * this.boxSize;
       if (colorByDistance) {
-        const blue: number = (255 * distance) / maxDistance
+        const blue: number = (255 * distance) / maxDistance;
         colors = [0, 0, blue];
       } else {
         colors = randomColors
@@ -138,6 +138,20 @@ export class Board {
     });
     return this;
   }
+
+  public getBoxPositionByDimensions = (dimensions: Cords) => {
+    const { x, y } = dimensions;
+    return {
+      x: x === 0 ? 0 : parseInt((x / this.boxSize) as any),
+      y: y === 0 ? 0 : parseInt((y / this.boxSize) as any)
+    };
+  };
+
+  public exist = (position: Cords): boolean =>
+    this._boxMap.some(
+      ({ position: { x: boxX, y: boxY } }) =>
+        boxX === position.x && boxY === position.y
+    );
 
   public get boxMap(): BoxMap {
     return this._boxMap;

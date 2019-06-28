@@ -48,7 +48,6 @@ export class GameScene extends Phaser.Scene {
       width: this.gameWidth,
       boxSize: this.fieldSize
     });
-    // .render(this.add);
 
     this.colisionBoard = new Board({
       height: this.gameHeight,
@@ -56,10 +55,26 @@ export class GameScene extends Phaser.Scene {
       boxSize: this.fieldSize,
       initAll: false,
       positionsToFill: [
+        { x: 10, y: 0 },
+        { x: 10, y: 1 },
+        { x: 10, y: 2 },
+        { x: 10, y: 3 },
+        { x: 10, y: 4 },
+        { x: 10, y: 5 },
+        { x: 10, y: 6 },
+        { x: 10, y: 7 },
+        { x: 10, y: 8 },
+        { x: 10, y: 9 },
         { x: 10, y: 10 },
         { x: 10, y: 11 },
         { x: 10, y: 12 },
-        { x: 10, y: 13 }
+        { x: 10, y: 13 },
+        { x: 10, y: 14 },
+        { x: 10, y: 15 },
+        { x: 10, y: 16 },
+        { x: 10, y: 17 },
+        { x: 10, y: 18 },
+        { x: 10, y: 19 },
       ]
     }).render(this.add, { color: { r: 255, a: 1, g: 0, b: 0 } });
 
@@ -81,12 +96,15 @@ export class GameScene extends Phaser.Scene {
   }
 
   update(time): void {
-    this.validBoard = this.validBoard
+    const { x: mouseX, y: mouseY } = this.input.mousePointer
+    const hoverBoxPosition = this.validBoard.getBoxPositionByDimensions({ x: mouseX, y: mouseY })
+    const boxExist = this.validBoard.exist(hoverBoxPosition)
+    if(boxExist) {
+      this.validBoard = this.validBoard
       .reset()
-      .calculateBoxesDistance({
-        x: Utils.getRandomInt(0, 9),
-        y: Utils.getRandomInt(0, 9)
-      }).render(this.add, { withDistance: true, colorByDistance: true });
+      .calculateBoxesDistance(hoverBoxPosition)
+      .render(this.add, { withDistance: true, colorByDistance: true });
+    }
     // if (this.tick === 0) {
     //   this.tick = time;
     // }

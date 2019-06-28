@@ -11,7 +11,7 @@ const config: GameConfig = {
   scene: [BootScene, GameScene],
   input: {
     keyboard: true,
-    mouse: false,
+    mouse: true,
     touch: false,
     gamepad: false
   },
