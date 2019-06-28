@@ -20,6 +20,9 @@ export class Box {
 
   public set distance(value: number) {
     this._distance = value;
+    if (this.bitmapText) {
+      this.bitmapText.text = value.toString();
+    }
   }
   public get distance() {
     return this._distance;
@@ -40,9 +43,14 @@ export class Box {
       this.graphicsObject.destroy();
       this.graphicsObject = undefined;
     }
-    if(this.bitmapText) {
-      this.bitmapText.destroy()
+    if (this.bitmapText) {
+      this.bitmapText.destroy();
       this.bitmapText = undefined;
     }
+  }
+
+  public removeBitmap() {
+    this.bitmapText.destroy();
+    this.bitmapText = undefined;
   }
 }

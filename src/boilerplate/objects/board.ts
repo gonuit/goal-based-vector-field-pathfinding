@@ -118,8 +118,6 @@ export class Board {
           : [r, g, b];
       }
       if (box.graphicsObject) {
-        box.graphicsObject.x = boxXposition;
-        box.graphicsObject.y = boxYposition;
         box.graphicsObject.fillStyle(Color.rgbToHex(...colors));
       } else {
         box.graphicsObject = factory
@@ -133,22 +131,17 @@ export class Board {
           })
           .fillRect(this.boxSize, this.boxSize, this.boxSize, this.boxSize);
       }
-      if (withDistance) {
-        if (box.bitmapText) {
-          box.bitmapText.text = distance.toString()
-        } else {
-          const centerAlign = this.boxSize * 1.33;
-          box.bitmapText = factory.bitmapText(
-            boxXposition + centerAlign,
-            boxYposition + centerAlign,
-            "mainFont",
-            box.distance.toString(),
-            8
-          );
-        }
-      } else if (box.bitmapText) {
-        box.bitmapText.destroy();
-        box.bitmapText = undefined;
+      if (withDistance && !box.bitmapText) {
+        const centerAlign = this.boxSize * 1.33;
+        box.bitmapText = factory.bitmapText(
+          boxXposition + centerAlign,
+          boxYposition + centerAlign,
+          "mainFont",
+          box.distance.toString(),
+          8
+        );
+      } else if (box.bitmapText && box.bitmapText) {
+        box.removeBitmap();
       }
       return box;
     });
