@@ -117,25 +117,38 @@ export class Board {
             ]
           : [r, g, b];
       }
-      box.graphicsObject = factory
-        .graphics({
-          x: boxXposition,
-          y: boxYposition,
-          fillStyle: {
-            color: Color.rgbToHex(...colors),
-            alpha: a
-          }
-        })
-        .fillRect(this.boxSize, this.boxSize, this.boxSize, this.boxSize);
+      if (box.graphicsObject) {
+        box.graphicsObject.x = boxXposition;
+        box.graphicsObject.y = boxYposition;
+        box.graphicsObject.fillStyle(Color.rgbToHex(...colors));
+      } else {
+        box.graphicsObject = factory
+          .graphics({
+            x: boxXposition,
+            y: boxYposition,
+            fillStyle: {
+              color: Color.rgbToHex(...colors),
+              alpha: a
+            }
+          })
+          .fillRect(this.boxSize, this.boxSize, this.boxSize, this.boxSize);
+      }
       if (withDistance) {
-        const centerAlign = this.boxSize * 1.33;
-        box.bitmapText = factory.bitmapText(
-          boxXposition + centerAlign,
-          boxYposition + centerAlign,
-          "mainFont",
-          box.distance.toString(),
-          8
-        );
+        if (box.bitmapText) {
+          box.bitmapText.text = distance.toString()
+        } else {
+          const centerAlign = this.boxSize * 1.33;
+          box.bitmapText = factory.bitmapText(
+            boxXposition + centerAlign,
+            boxYposition + centerAlign,
+            "mainFont",
+            box.distance.toString(),
+            8
+          );
+        }
+      } else if (box.bitmapText) {
+        box.bitmapText.destroy();
+        box.bitmapText = undefined;
       }
       return box;
     });
