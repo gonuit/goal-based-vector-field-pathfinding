@@ -14,6 +14,7 @@ export class Box {
   private _visited: boolean;
   public position: Cords;
   public graphicsObject: Phaser.GameObjects.Graphics;
+  public bitmapText: Phaser.GameObjects.BitmapText;
   constructor({ distance = 0, position, visited = false }: BoxConfig) {
     this._distance = distance;
     this._visited = visited;
@@ -41,6 +42,10 @@ export class Box {
     if (this.graphicsObject) {
       this.graphicsObject.destroy();
       this.graphicsObject = undefined;
+    }
+    if(this.bitmapText) {
+      this.bitmapText.destroy()
+      this.bitmapText = undefined;
     }
   }
 }

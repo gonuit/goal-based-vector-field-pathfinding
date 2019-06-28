@@ -1,6 +1,7 @@
 import { Snake } from "../objects/snake";
 import { CONST } from "../const/const";
 import { Board } from "../objects/board";
+import { Utils } from "../objects/utils";
 
 export class GameScene extends Phaser.Scene {
   // field and game setting
@@ -60,17 +61,10 @@ export class GameScene extends Phaser.Scene {
         { x: 10, y: 12 },
         { x: 10, y: 13 }
       ]
-    })
-      .render(this.add, { color: { r: 255, a: 1, g: 0, b: 0 } });
+    }).render(this.add, { color: { r: 255, a: 1, g: 0, b: 0 } });
 
     this.validBoard = this.fullBoard
       .removeFromBoard(this.colisionBoard)
-      .calculateBoxesDistance({ x: 13, y: 0 })
-      .reset()
-      .calculateBoxesDistance({ x: 13, y: 13 })
-      .reset()
-      .calculateBoxesDistance({ x: 13, y: 0 })
-      .reset()
       .calculateBoxesDistance({ x: 13, y: 13 })
       .render(this.add, { withDistance: true, colorByDistance: true });
 
@@ -87,6 +81,12 @@ export class GameScene extends Phaser.Scene {
   }
 
   update(time): void {
+    this.validBoard = this.validBoard
+      .reset()
+      .calculateBoxesDistance({
+        x: Utils.getRandomInt(0, 9),
+        y: Utils.getRandomInt(0, 9)
+      }).render(this.add, { withDistance: true, colorByDistance: true });
     // if (this.tick === 0) {
     //   this.tick = time;
     // }

@@ -126,7 +126,7 @@ export class Board {
         .fillRect(this.boxSize, this.boxSize, this.boxSize, this.boxSize);
       if (withDistance) {
         const centerAlign = this.boxSize * 1.33;
-        factory.bitmapText(
+        box.bitmapText = factory.bitmapText(
           boxXposition + centerAlign,
           boxYposition + centerAlign,
           "snakeFont",
