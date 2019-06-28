@@ -1,18 +1,15 @@
-export interface Cords {
-  x: number;
-  y: number;
-}
+import { Point } from "./point";
 
 export interface BoxConfig {
   distance?: number;
   visited?: boolean;
-  position: Cords;
+  position: Point;
 }
 
 export class Box {
   private _distance: number;
   private _visited: boolean;
-  public position: Cords;
+  public position: Point;
   public graphicsObject: Phaser.GameObjects.Graphics;
   public bitmapText: Phaser.GameObjects.BitmapText;
   constructor({ distance = 0, position, visited = false }: BoxConfig) {

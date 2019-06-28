@@ -1,6 +1,7 @@
-import { Box, Cords } from "./box";
+import { Box } from "./box";
 import { Color } from "./color";
 import { Utils } from "./utils";
+import { Point } from "./point";
 
 interface BoardDimensions {
   height: number;
@@ -10,12 +11,12 @@ interface BoardDimensions {
 
 export interface BoardConfig extends BoardDimensions {
   initAll?: boolean;
-  positionsToFill?: Array<Cords>;
+  positionsToFill?: Array<Point>;
 }
 
 interface initBoxMapConfig extends BoardDimensions {
   initAll?: boolean;
-  positionsToFill?: Array<Cords> | undefined;
+  positionsToFill?: Array<Point> | undefined;
 }
 
 export interface RenderColor {
@@ -42,6 +43,7 @@ export class Board {
   private _boxMap: BoxMap;
   private vertBoxes: number;
   private horBoxes: number;
+  private _goalPosition: Point;
   constructor({
     height,
     width,
@@ -50,6 +52,7 @@ export class Board {
     positionsToFill
   }: BoardConfig) {
     this.height = height;
+    this._goalPosition = new Point(-1, -1);
     this.width = width;
     this.boxSize = boxSize;
     this.initBoxMap({ height, width, boxSize, initAll, positionsToFill });
@@ -70,12 +73,12 @@ export class Board {
       for (let col = 0; col < this.horBoxes; col++) {
         map.push([]); // col array
         for (let row = 0; row < this.vertBoxes; row++) {
-          map[col].push(new Box({ position: { x: col, y: row } }));
+          map[col].push(new Box({ position: new Point(col, row) }));
         }
       }
     } else if (positionsToFill instanceof Array) {
       positionsToFill.forEach(({ x, y }) => {
-        map.push(new Box({ position: { x, y } }));
+        map.push(new Box({ position: new Point(x, y) }));
       });
     }
     this._boxMap = map.flat();
@@ -139,15 +142,15 @@ export class Board {
     return this;
   }
 
-  public getBoxPositionByDimensions = (dimensions: Cords) => {
+  public getBoxPositionByDimensions = (dimensions: Point): Point => {
     const { x, y } = dimensions;
-    return {
-      x: x === 0 ? 0 : parseInt((x / this.boxSize) as any),
-      y: y === 0 ? 0 : parseInt((y / this.boxSize) as any)
-    };
+    return new Point(
+      x === 0 ? 0 : parseInt((x / this.boxSize) as any),
+      y === 0 ? 0 : parseInt((y / this.boxSize) as any)
+    );
   };
 
-  public exist = (position: Cords): boolean =>
+  public exist = (position: Point): boolean =>
     this._boxMap.some(
       ({ position: { x: boxX, y: boxY } }) =>
         boxX === position.x && boxY === position.y
@@ -157,7 +160,11 @@ export class Board {
     return this._boxMap;
   }
 
-  private getBoxChildrens = ({ x, y }: Cords): BoxMap => {
+  public get goalPosition(): Point {
+    return this._goalPosition;
+  }
+
+  private getBoxChildrens = ({ x, y }: Point): BoxMap => {
     const childrenNodes = this.boxMap.filter(
       ({ position: { x: boxX, y: boxY } }) => {
         return (
@@ -168,11 +175,11 @@ export class Board {
         );
       }
     );
-    // console.log("childrenNodes", childrenNodes);
     return childrenNodes;
   };
 
-  private setGoalDistance = (goalPosition: Cords) => {
+  private setGoalDistance = (goalPosition: Point) => {
+    this._goalPosition = goalPosition;
     const { x: goalX, y: goalY } = goalPosition;
     const goalBox: Box = this.boxMap.find(
       ({ position: { x, y } }) => goalX === x && goalY === y
@@ -191,7 +198,7 @@ export class Board {
   };
 
   private calculateDistance = async (
-    position: Cords,
+    position: Point,
     distance: number = Board.GOAL_DISTANCE
   ) => {
     let childrenNodes: BoxMap = this.getBoxChildrens(position).filter(
@@ -210,7 +217,7 @@ export class Board {
     }
   };
 
-  public calculateBoxesDistance = (goalPosition: Cords): Board => {
+  public calculateBoxesDistance = (goalPosition: Point): Board => {
     this.setGoalDistance(goalPosition);
     this.calculateDistance(goalPosition);
     return this;
@@ -226,10 +233,9 @@ export class Board {
   public removeFromBoard = (board: Board) => {
     const boxMap = board.boxMap;
     const newBoxPositions = this.boxMap
-      .filter(({ position: { x, y } }) => {
-        return !boxMap.some(
-          ({ position: { x: xToRemove, y: yToRemove } }) =>
-            x === xToRemove && y === yToRemove
+      .filter(({ position }) => {
+        return !boxMap.some(({ position: positionToRemove }) =>
+          position.equals(positionToRemove)
         );
       })
       .map(({ position }) => position);

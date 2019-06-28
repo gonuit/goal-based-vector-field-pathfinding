@@ -1,7 +1,6 @@
 import { Snake } from "../objects/snake";
-import { CONST } from "../const/const";
 import { Board } from "../objects/board";
-import { Utils } from "../objects/utils";
+import { Point } from "../objects/point";
 
 export class GameScene extends Phaser.Scene {
   // field and game setting
@@ -55,51 +54,37 @@ export class GameScene extends Phaser.Scene {
       boxSize: this.fieldSize,
       initAll: false,
       positionsToFill: [
-        { x: 10, y: 0 },
-        { x: 10, y: 1 },
-        { x: 10, y: 2 },
-        { x: 10, y: 3 },
-        { x: 10, y: 4 },
-        { x: 10, y: 5 },
-        { x: 10, y: 6 },
-        { x: 10, y: 7 },
-        { x: 10, y: 8 },
-        { x: 10, y: 9 },
-        { x: 10, y: 10 },
-        { x: 10, y: 11 },
-        { x: 10, y: 12 },
-        { x: 10, y: 13 },
-        { x: 10, y: 14 },
-        { x: 10, y: 15 },
-        { x: 10, y: 16 },
-        { x: 10, y: 17 },
-        { x: 10, y: 18 },
-        { x: 10, y: 19 },
+        new Point(10,1),
+        new Point(10,2),
+        new Point(10,3),
+        new Point(10,4),
+        new Point(10,5),
+        new Point(10,6),
+        new Point(10,7),
+        new Point(10,8),
+        new Point(10,9),
+        new Point(10,10),
+        new Point(10,11),
+        new Point(10,12),
+        new Point(10,13),
+        new Point(10,14),
+        new Point(10,15),
+        new Point(10,16),
+        new Point(10,17),
+        new Point(10,18),
+        new Point(10,19),
       ]
     }).render(this.add, { color: { r: 255, a: 1, g: 0, b: 0 } });
 
     this.validBoard = this.fullBoard
       .removeFromBoard(this.colisionBoard)
-      .calculateBoxesDistance({ x: 13, y: 13 })
-      .render(this.add, { withDistance: true, colorByDistance: true });
-
-    // this.player = new Snake(this);
-
-    // text
-    // this.scoreText = this.add.bitmapText(
-    //   this.gameWidth / 2,
-    //   1,
-    //   "snakeFont",
-    //   "" + CONST.SCORE,
-    //   8
-    // );
   }
 
   update(time): void {
     const { x: mouseX, y: mouseY } = this.input.mousePointer
-    const hoverBoxPosition = this.validBoard.getBoxPositionByDimensions({ x: mouseX, y: mouseY })
+    const hoverBoxPosition: Point = this.validBoard.getBoxPositionByDimensions(new Point(mouseX, mouseY))
     const boxExist = this.validBoard.exist(hoverBoxPosition)
-    if(boxExist) {
+    if(boxExist && !this.validBoard.goalPosition.equals(hoverBoxPosition)) {
       this.validBoard = this.validBoard
       .reset()
       .calculateBoxesDistance(hoverBoxPosition)
