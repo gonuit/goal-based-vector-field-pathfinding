@@ -272,13 +272,6 @@ export class Board {
       parent.forceVector.x += -(bottomRight.distance - topLeft.distance) * 0.5
       parent.forceVector.y += -(bottomLeft.distance - topRight.distance) * 0.5
       parent.forceVector.x += (bottomLeft.distance - topRight.distance) * 0.5
-      
-      // const forceLeftCross: number = topRight.distance - bottomLeft.distance
-      // const forceRightCross: number = topLeft.distance - bottomRight.distance
-      // parent.forceVector.x += (forceLeftCross * 0.25)
-      // parent.forceVector.y += forceLeftCross * 0.25
-      // parent.forceVector.x += (forceRightCross * 0.25)
-      // parent.forceVector.y += (forceRightCross * 0.25)
     })
   }
 

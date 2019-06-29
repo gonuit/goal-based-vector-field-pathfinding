@@ -11,7 +11,7 @@ export class Particle extends Phaser.GameObjects.Graphics {
   private static MAX_VELOCITY: number = 10
   private static MAX_FORCE: number = 0.2
   private static MAX_SPEED: number = 2
-  private static DEFAULT_MASS: number = 1
+  private static DEFAULT_MASS: number = 1.5
   private _size: number
   private _mass: number
   private _steering: ForceVector
@@ -37,12 +37,12 @@ export class Particle extends Phaser.GameObjects.Graphics {
 
   public setVelocity(newVelocity: ForceVector): Particle {
     this._steering = newVelocity
-      .sub(this._velocity.truncate(2))
+      .truncate(Particle.MAX_VELOCITY)
+      .add(this._velocity)
       .truncate(Particle.MAX_FORCE)
       .devide(this._mass)
-    this._velocity = this._velocity.add(this._steering)
-      .truncate(Particle.MAX_SPEED)
-  
+    this._velocity = this._velocity.add(this._steering).truncate(Particle.MAX_SPEED)
+
     return this
   }
 
