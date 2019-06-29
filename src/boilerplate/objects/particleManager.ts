@@ -2,6 +2,7 @@ import { Particle } from "./particle";
 import { Scene } from "phaser";
 import { Point } from "./point";
 import { Board } from "./board";
+import { Box } from "./box";
 
 interface ParticleManagerConfig {
   amount: number;
@@ -45,8 +46,9 @@ export class ParticleManager {
   public moveByPath(board: Board) {
     this._particles.forEach(particle => {
       const { x, y } = particle
-      const particlePosition =  board.getBoxPositionByDimensions(new Point(x,y))
-      
+      const boxUnderParticle: Box =  board.getBoxByDimensions(new Point(x,y))
+      particle.x += boxUnderParticle.forceVector.x
+      particle.y += boxUnderParticle.forceVector.y
     });
   }
 }
