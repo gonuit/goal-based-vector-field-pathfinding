@@ -23,6 +23,7 @@ export class Particle extends Phaser.GameObjects.Graphics {
   private initElement() {
     this.fillStyle(0x61e85b, 0.8);
     this.fillCircle(0, 0, this._size);
+    this.setDepth(10)
     this._particleObject = this.scene.add.existing(this);
   }
 

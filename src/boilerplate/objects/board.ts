@@ -231,18 +231,25 @@ export class Board {
     const TEST_VALUE: number = 1
     this._boxMap.forEach((parent: Box) => {
       const { position, distance: parentDistance } = parent
+      const fakeObject: any =  { distance: parent.distance + 1 }
       const {
-        bottom = parent,
-        bottomLeft,
-        bottomRight,
-        left = parent,
-        right = parent,
-        top = parent,
-        topLeft,
-        topRight,
+        bottom = fakeObject,
+        bottomLeft = fakeObject,
+        bottomRight = fakeObject,
+        left = fakeObject,
+        right = fakeObject,
+        top = fakeObject,
+        topLeft = fakeObject,
+        topRight = fakeObject,
       }: NamedChildrens = this.getNamedChildrens(parent)
       parent.forceVector.x = left.distance - right.distance
       parent.forceVector.y = top.distance - bottom.distance
+      // const forceLeftCross: number = topRight.distance - bottomLeft.distance
+      // const forceRightCross: number = topLeft.distance - bottomRight.distance
+      // parent.forceVector.x += (forceLeftCross * 0.25)
+      // parent.forceVector.y += forceLeftCross * 0.25
+      // parent.forceVector.x += (forceRightCross * 0.25)
+      // parent.forceVector.y += (forceRightCross * 0.25)
     })
   }
 

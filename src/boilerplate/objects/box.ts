@@ -177,9 +177,10 @@ export class Box {
     this._gameObjectLine = factory
       .line(originX, originY, 0, 0, forceX * Box.FORCE_VECTOR_MULTIPIER, forceY * Box.FORCE_VECTOR_MULTIPIER, 0xffffff)
       .setOrigin(0, 0)
+      .setDepth(1)
       .setLineWidth(0.5)
     if (!this._gameObjectLineOriginDot) {
-      this._gameObjectLineOriginDot = factory.circle(originX, originY, 2, 0xffffff)
+      this._gameObjectLineOriginDot = factory.circle(originX, originY, 2, 0xffffff).setDepth(2)
     }
     return this
   }

@@ -81,26 +81,26 @@ export class GameScene extends Phaser.Scene {
         new Point(10, 18),
         new Point(10, 19),
 
-        // new Point(13, 3),
-        // new Point(13, 4),
-        // new Point(13, 5),
-        // new Point(13, 6),
-        // new Point(13, 7),
-        // new Point(13, 8),
-        // new Point(13, 9),
-        // new Point(13, 10),
-        // new Point(13, 11),
-        // new Point(13, 12),
-        // new Point(13, 13),
-        // new Point(13, 14),
-        // new Point(13, 15),
-        // new Point(13, 16),
-        // new Point(13, 17),
-        // new Point(13, 18),
-        // new Point(13, 19),
-        // new Point(13, 20),
-        // new Point(13, 21),
-        // new Point(13, 22)
+        new Point(13, 3),
+        new Point(13, 4),
+        new Point(13, 5),
+        new Point(13, 6),
+        new Point(13, 7),
+        new Point(13, 8),
+        new Point(13, 9),
+        new Point(13, 10),
+        new Point(13, 11),
+        new Point(13, 12),
+        new Point(13, 13),
+        new Point(13, 14),
+        new Point(13, 15),
+        new Point(13, 16),
+        new Point(13, 17),
+        new Point(13, 18),
+        new Point(13, 19),
+        new Point(13, 20),
+        new Point(13, 21),
+        new Point(13, 22)
       ],
     }).render(this.add, { color: { r: 255, a: 1, g: 0, b: 0 } })
 
@@ -121,11 +121,11 @@ export class GameScene extends Phaser.Scene {
     const hoverBoxPosition: Point = this.validBoard.getBoxPositionByDimensions(new Point(mouseX, mouseY))
     const boxExist = this.validBoard.exist(hoverBoxPosition)
     if (boxExist && !this.validBoard.goalPosition.equals(hoverBoxPosition)) {
-      const currentHoveredBox: Box = this.validBoard.getBoxByDimensions(new Point(mouseX, mouseY))
       this.validBoard = this.validBoard
         .calculateBoxesDistance(hoverBoxPosition)
         .render(this.add, { renderDistances: false, renderVectorLines: true, colorByDistance: true })
     }
+    this.particle.update()
     this.particle.absoluteMoveTo(new Point(mouseX, mouseY))
     this.particleManager.moveByPath(this.validBoard)
     // if (this.tick === 0) {
