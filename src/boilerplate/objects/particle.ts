@@ -9,8 +9,8 @@ export interface ParticleConfig extends GraphicsOptions {
 
 export class Particle extends Phaser.GameObjects.Graphics {
   private static MAX_VELOCITY: number = 10
-  private static MAX_FORCE: number = 1
-  private static MAX_SPEED: number = 1
+  private static MAX_FORCE: number = 0.2
+  private static MAX_SPEED: number = 2
   private static DEFAULT_MASS: number = 1
   private _size: number
   private _mass: number

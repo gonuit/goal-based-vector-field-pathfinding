@@ -114,16 +114,11 @@ export class Box {
 
   private renderBoxBackground(factory: Phaser.GameObjects.GameObjectFactory, { color, alpha = 1 }: BoxRenderer): Box {
     if (this._rectangleObject) {
-      // this._rectangleObject.destroy()
-      // this._rectangleObject = undefined
       this._rectangleObject.fillColor = color
     } else {
       const boxXposition = this._size / 2 + this.position.x * this._size
-      const boxYposition = -(this._size / 2) + this.position.y * this._size
-      // if(boxXposition != 0) return this
-      // if(boxYposition != 0) return this
+      const boxYposition = (this._size / 2) + this.position.y * this._size
       this._rectangleObject = factory.rectangle(boxXposition, boxYposition, this._size, this._size, color, alpha)
-      // .fillRect(this._size, this._size, this._size, this._size)
     }
     return this
   }
