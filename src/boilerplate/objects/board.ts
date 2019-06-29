@@ -37,7 +37,7 @@ export interface RenderColor {
   a: number
 }
 
-export interface RenderConfig extends BoxRenderConfig {
+export interface BoardRendererConfig extends BoxRenderConfig {
   color?: RenderColor
 
   colorByDistance?: boolean
@@ -91,7 +91,7 @@ export class Board {
       renderVectorLines = false,
       randomColors = false,
       colorByDistance = false,
-    }: RenderConfig = {}
+    }: BoardRendererConfig = {}
   ): Board {
     let maxDistance: number
     if (colorByDistance) {

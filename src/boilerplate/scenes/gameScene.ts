@@ -1,7 +1,7 @@
-import { Board } from "../objects/board"
+import { Board, BoardRendererConfig } from "../objects/board"
 import { Point } from "../objects/point"
 import { ParticleManager } from "../objects/particleManager"
-import { Statistics } from "../objects/statistics";
+import { Statistics } from "../objects/statistics"
 
 export class GameScene extends Phaser.Scene {
   // field and game setting
@@ -11,6 +11,7 @@ export class GameScene extends Phaser.Scene {
   private horizontalBoxes: number
   private verticalBoxes: number
 
+  private rendererConfig: BoardRendererConfig
   private stats: Statistics
 
   private fullBoard: Board
@@ -36,7 +37,9 @@ export class GameScene extends Phaser.Scene {
 
   create(): void {
     this.stats.displayFPS(true)
-    
+    this.rendererConfig = { color: { r: 0, g: 0, b: 200, a: 1 } }
+    this.initEvents()
+
     this.fullBoard = new Board({
       horizontalBoxes: this.horizontalBoxes,
       verticalBoxes: this.verticalBoxes,
@@ -113,12 +116,9 @@ export class GameScene extends Phaser.Scene {
     const hoverBoxPosition: Point = this.validBoard.getBoxPositionByDimensions(new Point(mouseX, mouseY))
     const boxExist = this.validBoard.exist(hoverBoxPosition)
     if (boxExist && !this.validBoard.goalPosition.equals(hoverBoxPosition)) {
-      this.validBoard = this.validBoard
-        .calculateBoxesDistance(hoverBoxPosition)
-        .render(this.add, { renderDistances: false, renderVectorLines: true, colorByDistance: true })
+      this.validBoard = this.validBoard.calculateBoxesDistance(hoverBoxPosition).render(this.add, this.rendererConfig)
     }
     this.particleManager.moveByPath(this.validBoard)
-
   }
 
   private checkCollision(): void {
@@ -138,6 +138,42 @@ export class GameScene extends Phaser.Scene {
     // }
     // // snake vs. snake collision
     // this.player.checkSnakeSnakeCollision();
+  }
+
+  private initEvents = () => {
+    this.input.keyboard.addListener("keyup", this.handleKeyboardEvent)
+  }
+
+  private handleKeyboardEvent = (event: KeyboardEvent) => {
+    switch (event.key) {
+      case "1": {
+        this.rendererConfig = { ...this.rendererConfig, colorByDistance: !this.rendererConfig.colorByDistance }
+        return
+      }
+      case "2": {
+        this.rendererConfig = {
+          ...this.rendererConfig,
+          renderDistances: !this.rendererConfig.renderDistances,
+          renderVectorLines: false,
+        }
+        return
+      }
+      case "3": {
+        this.rendererConfig = {
+          ...this.rendererConfig,
+          renderVectorLines: !this.rendererConfig.renderVectorLines,
+          renderDistances: false,
+        }
+        return
+      }
+      case "4": {
+        this.rendererConfig = {
+          ...this.rendererConfig,
+          randomColors: !this.rendererConfig.randomColors
+        }
+        return
+      }
+    }
   }
 
   // private rndXPos(): number {
