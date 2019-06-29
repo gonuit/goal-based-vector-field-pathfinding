@@ -47,7 +47,7 @@ export class GameScene extends Phaser.Scene {
 
     this.colisionBoard = new Board(this, {
       horizontalBoxes: this.horizontalBoxes,
-      initialRendererConfig: { color: { r: 255, a: 1, g: 255, b: 0 } },
+      initialRendererConfig: { color: { r: 50, a: 1, g: 200, b: 0 } },
       verticalBoxes: this.verticalBoxes,
       boxSize: this.fieldSize,
       initAll: false,
@@ -103,7 +103,7 @@ export class GameScene extends Phaser.Scene {
     }).render()
 
     this.validBoard = this.fullBoard.removeFromBoard(this.colisionBoard)
-    this.validBoard.rendererConfig = { color: { r: 0, g: 0, b: 200, a: 1 } }
+    this.validBoard.rendererConfig = { color: { r: 0, g: 0, b: 200, a: 1 }, renderVectorLines: true, colorByDistance: true }
 
     this.particleManager = new ParticleManager(this, {
       amount: 10,
