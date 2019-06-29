@@ -2,6 +2,7 @@ import { Box, BoxRenderConfig } from "./box"
 import { Color } from "./color"
 import { Utils } from "./utils"
 import { Point } from "./point"
+import { Scene } from "phaser"
 
 interface BoardDimensions {
   horizontalBoxes: number
@@ -11,6 +12,7 @@ interface BoardDimensions {
 
 export interface BoardConfig extends BoardDimensions {
   initAll?: boolean
+  initialRendererConfig?: BoardRendererConfig
   positionsToFill?: Array<Point>
 }
 
@@ -49,12 +51,28 @@ export type BoxMap = Array<Box>
 export class Board {
   public static GOAL_DISTANCE = 0
   private _indicateRefresh: boolean
+  private _rendererConfig: BoardRendererConfig
+  private _initialRendererConfig: BoardRendererConfig
+  private _scene: Scene
   private _boxSize: number
   private _boxMap: BoxMap
   private _verticalBoxes: number
   private horizontalBoxes: number
   private _goalPosition: Point
-  constructor({ horizontalBoxes, verticalBoxes, boxSize = 20, initAll = true, positionsToFill }: BoardConfig) {
+  constructor(
+    scene: Scene,
+    {
+      horizontalBoxes,
+      verticalBoxes,
+      boxSize = 20,
+      initAll = true,
+      positionsToFill,
+      initialRendererConfig = { color: { r: 255, g: 0, b: 0, a: 0.3 } },
+    }: BoardConfig
+  ) {
+    this._scene = scene
+    this._rendererConfig = initialRendererConfig
+    this._initialRendererConfig = initialRendererConfig
     this._verticalBoxes = verticalBoxes
     this.horizontalBoxes = horizontalBoxes
     this._goalPosition = new Point(-1, -1)
@@ -79,20 +97,17 @@ export class Board {
     this._boxMap = map.flat()
   }
 
-  public render(
-    factory: Phaser.GameObjects.GameObjectFactory,
-    {
-      color: { r = 255, g = 0, b = 0, a = 0.3 } = {} as any,
+  public render(): Board {
+    const {
+      color: { r = 255, g = 0, b = 0, a = 0 } = {} as any,
       renderDistances = false,
       renderVectorLines = false,
       indicateBoardRefresh = false,
       colorByDistance = false,
-    }: BoardRendererConfig = {}
-  ): Board {
+    } = this._rendererConfig
     let maxDistance: number
-    if (colorByDistance) {
-      maxDistance = Math.max(...this.boxMap.map(({ distance }) => distance))
-    }
+    if (colorByDistance) maxDistance = Math.max(...this.boxMap.map(({ distance }) => distance))
+
     this._indicateRefresh = indicateBoardRefresh ? (this._indicateRefresh = !this._indicateRefresh) : false
 
     this._boxMap.forEach((box) => {
@@ -106,7 +121,7 @@ export class Board {
       } else {
         color = Color.rgbToHex(r, g, b)
       }
-      box.render(factory, {
+      box.render(this._scene.add, {
         color,
         renderDistances,
         renderVectorLines,
@@ -141,6 +156,15 @@ export class Board {
 
   public get indicateRefresh(): boolean {
     return this._indicateRefresh
+  }
+
+  public get rendererConfig() {
+    return this._rendererConfig
+  }
+
+  public set rendererConfig(value: BoardRendererConfig) {
+    this._rendererConfig = value
+    this.render()
   }
 
   private getBoxChildrens = ({ x, y }: Point): BoxMap => {
@@ -229,7 +253,6 @@ export class Board {
   }
 
   public calculateForceVectors = () => {
-    const TEST_VALUE: number = 1
     this._boxMap.forEach((parent: Box) => {
       const { position, distance: parentDistance } = parent
       const fakeObject: any = { distance: parent.distance + 1 }
@@ -276,7 +299,8 @@ export class Board {
         return !boxMap.some(({ position: positionToRemove }) => position.equals(positionToRemove))
       })
       .map(({ position }) => position)
-    return new Board({
+    return new Board(this._scene, {
+      initialRendererConfig: this._initialRendererConfig,
       verticalBoxes: this._verticalBoxes,
       horizontalBoxes: this.horizontalBoxes,
       boxSize: this._boxSize,

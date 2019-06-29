@@ -10,9 +10,7 @@ export class GameScene extends Phaser.Scene {
   private gameWidth: number
   private horizontalBoxes: number
   private verticalBoxes: number
-  private renderConfigurationChanged: boolean
 
-  private rendererConfig: BoardRendererConfig
   private stats: Statistics
 
   private fullBoard: Board
@@ -38,17 +36,18 @@ export class GameScene extends Phaser.Scene {
 
   create(): void {
     this.stats.displayFPS(true)
-    this.rendererConfig = { color: { r: 0, g: 0, b: 200, a: 1 } }
+
     this.initEvents()
 
-    this.fullBoard = new Board({
+    this.fullBoard = new Board(this, {
       horizontalBoxes: this.horizontalBoxes,
       verticalBoxes: this.verticalBoxes,
       boxSize: this.fieldSize,
     })
 
-    this.colisionBoard = new Board({
+    this.colisionBoard = new Board(this, {
       horizontalBoxes: this.horizontalBoxes,
+      initialRendererConfig: { color: { r: 255, a: 1, g: 255, b: 0 } },
       verticalBoxes: this.verticalBoxes,
       boxSize: this.fieldSize,
       initAll: false,
@@ -101,9 +100,10 @@ export class GameScene extends Phaser.Scene {
         new Point(15, 6),
         new Point(16, 6),
       ],
-    }).render(this.add, { color: { r: 255, a: 1, g: 0, b: 0 } })
+    }).render()
 
     this.validBoard = this.fullBoard.removeFromBoard(this.colisionBoard)
+    this.validBoard.rendererConfig = { color: { r: 0, g: 0, b: 200, a: 1 } }
 
     this.particleManager = new ParticleManager(this, {
       amount: 10,
@@ -117,13 +117,11 @@ export class GameScene extends Phaser.Scene {
     const hoverBoxPosition: Point = this.validBoard.getBoxPositionByDimensions(new Point(mouseX, mouseY))
     const boxExist = this.validBoard.exist(hoverBoxPosition)
     if (boxExist && !this.validBoard.goalPosition.equals(hoverBoxPosition)) {
-      this.validBoard = this.validBoard.calculateBoxesDistance(hoverBoxPosition).render(this.add, this.rendererConfig)
+      this.validBoard = this.validBoard.calculateBoxesDistance(hoverBoxPosition).render()
     } else if (
-      (this.rendererConfig.indicateBoardRefresh && this.validBoard.indicateRefresh) ||
-      this.renderConfigurationChanged
+      (this.validBoard.rendererConfig.indicateBoardRefresh && this.validBoard.indicateRefresh)
     ) {
-      this.renderConfigurationChanged = false
-      this.validBoard = this.validBoard.render(this.add, this.rendererConfig)
+      this.validBoard = this.validBoard.render()
     }
     this.particleManager.moveByPath(this.validBoard)
   }
@@ -137,33 +135,29 @@ export class GameScene extends Phaser.Scene {
   private handleKeyboardEvent = (event: KeyboardEvent) => {
     switch (event.key) {
       case "1": {
-        this.renderConfigurationChanged = true
-        this.rendererConfig = { ...this.rendererConfig, colorByDistance: !this.rendererConfig.colorByDistance }
+        this.validBoard.rendererConfig = { ...this.validBoard.rendererConfig, colorByDistance: !this.validBoard.rendererConfig.colorByDistance }
         return
       }
       case "2": {
-        this.renderConfigurationChanged = true
-        this.rendererConfig = {
-          ...this.rendererConfig,
-          renderDistances: !this.rendererConfig.renderDistances,
+        this.validBoard.rendererConfig = {
+          ...this.validBoard.rendererConfig,
+          renderDistances: !this.validBoard.rendererConfig.renderDistances,
           renderVectorLines: false,
         }
         return
       }
       case "3": {
-        this.renderConfigurationChanged = true
-        this.rendererConfig = {
-          ...this.rendererConfig,
-          renderVectorLines: !this.rendererConfig.renderVectorLines,
+        this.validBoard.rendererConfig = {
+          ...this.validBoard.rendererConfig,
+          renderVectorLines: !this.validBoard.rendererConfig.renderVectorLines,
           renderDistances: false,
         }
         return
       }
       case "4": {
-        this.renderConfigurationChanged = true
-        this.rendererConfig = {
-          ...this.rendererConfig,
-          indicateBoardRefresh: !this.rendererConfig.indicateBoardRefresh,
+        this.validBoard.rendererConfig = {
+          ...this.validBoard.rendererConfig,
+          indicateBoardRefresh: !this.validBoard.rendererConfig.indicateBoardRefresh,
         }
         return
       }
