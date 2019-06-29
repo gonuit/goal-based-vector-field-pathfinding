@@ -10,6 +10,7 @@ export class GameScene extends Phaser.Scene {
   private gameWidth: number
   private horizontalBoxes: number
   private verticalBoxes: number
+  private renderConfigurationChanged: boolean
 
   private rendererConfig: BoardRendererConfig
   private stats: Statistics
@@ -117,15 +118,17 @@ export class GameScene extends Phaser.Scene {
     const boxExist = this.validBoard.exist(hoverBoxPosition)
     if (boxExist && !this.validBoard.goalPosition.equals(hoverBoxPosition)) {
       this.validBoard = this.validBoard.calculateBoxesDistance(hoverBoxPosition).render(this.add, this.rendererConfig)
-    } else if (this.rendererConfig.indicateBoardRefresh && this.validBoard.indicateRefresh) {
+    } else if (
+      (this.rendererConfig.indicateBoardRefresh && this.validBoard.indicateRefresh) ||
+      this.renderConfigurationChanged
+    ) {
+      this.renderConfigurationChanged = false
       this.validBoard = this.validBoard.render(this.add, this.rendererConfig)
     }
     this.particleManager.moveByPath(this.validBoard)
   }
 
-  private checkCollision(): void {
-
-  }
+  private checkCollision(): void {}
 
   private initEvents = () => {
     this.input.keyboard.addListener("keyup", this.handleKeyboardEvent)
@@ -134,10 +137,12 @@ export class GameScene extends Phaser.Scene {
   private handleKeyboardEvent = (event: KeyboardEvent) => {
     switch (event.key) {
       case "1": {
+        this.renderConfigurationChanged = true
         this.rendererConfig = { ...this.rendererConfig, colorByDistance: !this.rendererConfig.colorByDistance }
         return
       }
       case "2": {
+        this.renderConfigurationChanged = true
         this.rendererConfig = {
           ...this.rendererConfig,
           renderDistances: !this.rendererConfig.renderDistances,
@@ -146,6 +151,7 @@ export class GameScene extends Phaser.Scene {
         return
       }
       case "3": {
+        this.renderConfigurationChanged = true
         this.rendererConfig = {
           ...this.rendererConfig,
           renderVectorLines: !this.rendererConfig.renderVectorLines,
@@ -154,6 +160,7 @@ export class GameScene extends Phaser.Scene {
         return
       }
       case "4": {
+        this.renderConfigurationChanged = true
         this.rendererConfig = {
           ...this.rendererConfig,
           indicateBoardRefresh: !this.rendererConfig.indicateBoardRefresh,
