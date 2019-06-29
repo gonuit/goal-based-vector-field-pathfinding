@@ -25,8 +25,8 @@ export class Box {
   private _distance: number
   private _visited: boolean
   public position: Point
-  public graphicsObject: Phaser.GameObjects.Graphics | undefined
-  public bitmapText: Phaser.GameObjects.BitmapText | undefined
+  private _rectangleObject: Phaser.GameObjects.Rectangle | undefined
+  private _bitmapText: Phaser.GameObjects.BitmapText | undefined
   private _gameObjectLineOriginDot: Phaser.GameObjects.Arc | undefined
   private _gameObjectLine: Phaser.GameObjects.Line | undefined
   private _forceVector: ForceVector
@@ -47,8 +47,8 @@ export class Box {
 
   public set distance(value: number) {
     this._distance = value
-    if (this.bitmapText) {
-      this.bitmapText.text = value.toString()
+    if (this._bitmapText) {
+      this._bitmapText.text = value.toString()
     }
   }
   public get distance(): number {
@@ -83,14 +83,14 @@ export class Box {
   }
 
   public removeGraphicObject = () => {
-    this.graphicsObject.destroy()
-    this.graphicsObject = undefined
+    this._rectangleObject.destroy()
+    this._rectangleObject = undefined
   }
 
   private removeBitmapIfExist = (): void => {
-    if (!this.bitmapText) return
-    this.bitmapText.destroy()
-    this.bitmapText = undefined
+    if (!this._bitmapText) return
+    this._bitmapText.destroy()
+    this._bitmapText = undefined
   }
 
   private removeGameObjectLineIfExist = (): void => {
@@ -113,22 +113,18 @@ export class Box {
   }
 
   private renderBoxBackground(factory: Phaser.GameObjects.GameObjectFactory, { color, alpha = 1 }: BoxRenderer): Box {
-    if (this.graphicsObject) {
-      this.graphicsObject.fillStyle(color)
-      return this
+    if (this._rectangleObject) {
+      // this._rectangleObject.destroy()
+      // this._rectangleObject = undefined
+      this._rectangleObject.fillColor = color
+    } else {
+      const boxXposition = this._size / 2 + this.position.x * this._size
+      const boxYposition = -(this._size / 2) + this.position.y * this._size
+      // if(boxXposition != 0) return this
+      // if(boxYposition != 0) return this
+      this._rectangleObject = factory.rectangle(boxXposition, boxYposition, this._size, this._size, color, alpha)
+      // .fillRect(this._size, this._size, this._size, this._size)
     }
-    const boxXposition = -this._size + this.position.x * this._size
-    const boxYposition = -this._size + this.position.y * this._size
-    this.graphicsObject = factory
-      .graphics({
-        x: boxXposition,
-        y: boxYposition,
-        fillStyle: {
-          color,
-          alpha,
-        },
-      })
-      .fillRect(this._size, this._size, this._size, this._size)
     return this
   }
 
@@ -137,17 +133,16 @@ export class Box {
       this.removeBitmapIfExist()
       return this
     }
-    if (!this.bitmapText) {
-      const centerAlign = this._size * 1.33
-      this.bitmapText = factory.bitmapText(
-        this.graphicsObject.x + centerAlign,
-        this.graphicsObject.y + centerAlign,
+    if (!this._bitmapText) {
+      this._bitmapText = factory.bitmapText(
+        this._rectangleObject.x,
+        this._rectangleObject.y,
         "mainFont",
         this.distance.toString(),
         8
       )
     } else {
-      this.bitmapText.setText(this.distance.toString())
+      this._bitmapText.setText(this.distance.toString())
     }
     return this
   }
@@ -156,7 +151,7 @@ export class Box {
     factory: Phaser.GameObjects.GameObjectFactory,
     { renderVectorLines }: BoxRenderer
   ): Box => {
-    if (!renderVectorLines || !this.graphicsObject) {
+    if (!renderVectorLines || !this._rectangleObject) {
       this.removeGameObjectLineIfExist()
       this.removeGameObjectLineOriginDotIfExist()
       return this
@@ -168,18 +163,15 @@ export class Box {
       this._gameObjectLine.setTo(0, 0, forceX * Box.FORCE_VECTOR_MULTIPIER, forceY * Box.FORCE_VECTOR_MULTIPIER)
       return this
     }
-    const { x, y } = this.graphicsObject
-    const positionModifier: number = this._size * 1.5
-    const originX = x + positionModifier
-    const originY = y + positionModifier
+    const { x, y } = this._rectangleObject
     this._gameObjectLine = factory
-      .line(originX, originY, 0, 0, forceX * Box.FORCE_VECTOR_MULTIPIER, forceY * Box.FORCE_VECTOR_MULTIPIER, 0xffffff)
+      .line(x, y, 0, 0, forceX * Box.FORCE_VECTOR_MULTIPIER, forceY * Box.FORCE_VECTOR_MULTIPIER, 0xffffff)
       .setOrigin(0, 0)
       .setDepth(1)
       .setLineWidth(0.5)
 
     if (!this._gameObjectLineOriginDot)
-      this._gameObjectLineOriginDot = factory.circle(originX, originY, 2, 0xffffff).setDepth(2)
+      this._gameObjectLineOriginDot = factory.circle(x, y, 2, 0xffffff).setDepth(2)
 
     return this
   }

@@ -41,23 +41,20 @@ export interface BoardRendererConfig extends BoxRenderConfig {
   color?: RenderColor
 
   colorByDistance?: boolean
-  randomColors?: boolean
+  indicateBoardRefresh?: boolean
 }
 
 export type BoxMap = Array<Box>
 
 export class Board {
   public static GOAL_DISTANCE = 0
-  private height: number
-  private width: number
+  private _indicateRefresh: boolean
   private _boxSize: number
   private _boxMap: BoxMap
   private _verticalBoxes: number
   private horizontalBoxes: number
   private _goalPosition: Point
   constructor({ horizontalBoxes, verticalBoxes, boxSize = 20, initAll = true, positionsToFill }: BoardConfig) {
-    this.height = verticalBoxes * boxSize
-    this.width = horizontalBoxes * boxSize
     this._verticalBoxes = verticalBoxes
     this.horizontalBoxes = horizontalBoxes
     this._goalPosition = new Point(-1, -1)
@@ -66,7 +63,6 @@ export class Board {
   }
 
   private initBoxMap = ({ initAll, positionsToFill }: initBoxMapConfig): void => {
-
     const map = []
     if (initAll) {
       for (let col = 0; col < this.horizontalBoxes; col++) {
@@ -89,7 +85,7 @@ export class Board {
       color: { r = 255, g = 0, b = 0, a = 0.3 } = {} as any,
       renderDistances = false,
       renderVectorLines = false,
-      randomColors = false,
+      indicateBoardRefresh = false,
       colorByDistance = false,
     }: BoardRendererConfig = {}
   ): Board {
@@ -97,23 +93,24 @@ export class Board {
     if (colorByDistance) {
       maxDistance = Math.max(...this.boxMap.map(({ distance }) => distance))
     }
-    this._boxMap.map((box) => {
-      let colors: [number, number, number]
+    this._indicateRefresh = indicateBoardRefresh ? (this._indicateRefresh = !this._indicateRefresh) : false
+
+    this._boxMap.forEach((box) => {
+      let color: number
       const { distance } = box
-      if (colorByDistance) {
+      if (this._indicateRefresh) {
+        color = 0xaaff00
+      } else if (colorByDistance) {
         const blue: number = (255 * distance) / maxDistance
-        colors = [0, 0, blue]
+        color = Color.rgbToHex(0, 0, blue)
       } else {
-        colors = randomColors
-          ? [Utils.getRandomInt(10, 255), Utils.getRandomInt(10, 255), Utils.getRandomInt(10, 255)]
-          : [r, g, b]
+        color = Color.rgbToHex(r, g, b)
       }
       box.render(factory, {
-        color: Color.rgbToHex(...colors),
+        color,
         renderDistances,
         renderVectorLines,
       })
-      return box
     })
     return this
   }
@@ -140,6 +137,10 @@ export class Board {
 
   public get goalPosition(): Point {
     return this._goalPosition
+  }
+
+  public get indicateRefresh(): boolean {
+    return this._indicateRefresh
   }
 
   private getBoxChildrens = ({ x, y }: Point): BoxMap => {
@@ -231,7 +232,7 @@ export class Board {
     const TEST_VALUE: number = 1
     this._boxMap.forEach((parent: Box) => {
       const { position, distance: parentDistance } = parent
-      const fakeObject: any =  { distance: parent.distance + 1 }
+      const fakeObject: any = { distance: parent.distance + 1 }
       const {
         bottom = fakeObject,
         bottomLeft = fakeObject,

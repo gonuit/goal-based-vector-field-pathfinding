@@ -117,6 +117,8 @@ export class GameScene extends Phaser.Scene {
     const boxExist = this.validBoard.exist(hoverBoxPosition)
     if (boxExist && !this.validBoard.goalPosition.equals(hoverBoxPosition)) {
       this.validBoard = this.validBoard.calculateBoxesDistance(hoverBoxPosition).render(this.add, this.rendererConfig)
+    } else if (this.rendererConfig.indicateBoardRefresh && this.validBoard.indicateRefresh) {
+      this.validBoard = this.validBoard.render(this.add, this.rendererConfig)
     }
     this.particleManager.moveByPath(this.validBoard)
   }
@@ -169,20 +171,10 @@ export class GameScene extends Phaser.Scene {
       case "4": {
         this.rendererConfig = {
           ...this.rendererConfig,
-          randomColors: !this.rendererConfig.randomColors
+          indicateBoardRefresh: !this.rendererConfig.indicateBoardRefresh,
         }
         return
       }
     }
   }
-
-  // private rndXPos(): number {
-  //   return (
-  //     Phaser.Math.RND.between(1, this.horizontalBoxes - 1) * this.fieldSize
-  //   );
-  // }
-
-  // private rndYPos(): number {
-  //   return Phaser.Math.RND.between(1, this.verticalBoxes - 1) * this.fieldSize;
-  // }
 }
