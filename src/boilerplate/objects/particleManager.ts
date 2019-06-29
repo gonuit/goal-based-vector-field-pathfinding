@@ -13,6 +13,7 @@ interface ParticleManagerConfig {
   initialPosition?: Point
   size?: number
   inaccuracy?: Inaccuracy
+  colisionBoard?: Board
 }
 
 export type Particles = Array<Particle>
@@ -25,10 +26,12 @@ export class ParticleManager {
   private _initialPosition: Point
   private _group: Phaser.GameObjects.Group
   private _inaccuracy: Inaccuracy
+  private _colisionBoard: Board
   constructor(
     scene: Scene,
-    { amount, size = 5, initialPosition = new Point(0, 0), inaccuracy }: ParticleManagerConfig
+    { amount, size = 5, initialPosition = new Point(0, 0), inaccuracy, colisionBoard }: ParticleManagerConfig
   ) {
+    this._colisionBoard = colisionBoard
     this._scene = scene
     this._particles = []
     this._amount = amount
@@ -67,5 +70,9 @@ export class ParticleManager {
       if (this._inaccuracy) particle.moveWithInaccuracyByVelocity(this._inaccuracy)
       else particle.moveByVelocity()
     })
+  }
+
+  public checkColisions = (): void => {
+    
   }
 }

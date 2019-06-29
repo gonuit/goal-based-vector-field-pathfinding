@@ -113,6 +113,7 @@ export class GameScene extends Phaser.Scene {
       amount: 10,
       inaccuracy: { min: 0.5, max: 1 },
       initialPosition: new Point(100, 100),
+      colisionBoard: this.colisionBoard
     })
   }
 
