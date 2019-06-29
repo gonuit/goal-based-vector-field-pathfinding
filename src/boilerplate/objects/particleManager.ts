@@ -42,8 +42,8 @@ export class ParticleManager {
     this._particles.forEach((particle) => {
       const { x, y } = particle
       const boxUnderParticle: Box = board.getBoxByDimensions(new Point(x, y))
-      particle.x += boxUnderParticle.forceVector.x
-      particle.y += boxUnderParticle.forceVector.y
+      particle.setVelocity(boxUnderParticle.forceVector)
+      .moveByVelocity()
     })
   }
 }

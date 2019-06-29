@@ -25,10 +25,10 @@ export class Box {
   private _distance: number
   private _visited: boolean
   public position: Point
-  public graphicsObject: Phaser.GameObjects.Graphics
-  public bitmapText: Phaser.GameObjects.BitmapText
-  private _gameObjectLineOriginDot: Phaser.GameObjects.Arc
-  private _gameObjectLine: Phaser.GameObjects.Line
+  public graphicsObject: Phaser.GameObjects.Graphics | undefined
+  public bitmapText: Phaser.GameObjects.BitmapText | undefined
+  private _gameObjectLineOriginDot: Phaser.GameObjects.Arc | undefined
+  private _gameObjectLine: Phaser.GameObjects.Line | undefined
   private _forceVector: ForceVector
   private _size: number
   constructor({
@@ -74,14 +74,6 @@ export class Box {
   public reset() {
     this._visited = false
     this._distance = 0
-    if (this.graphicsObject) {
-      this.graphicsObject.destroy()
-      this.graphicsObject = undefined
-    }
-    if (this.bitmapText) {
-      this.bitmapText.destroy()
-      this.bitmapText = undefined
-    }
     this.resetForce()
   }
 
@@ -95,9 +87,22 @@ export class Box {
     this.graphicsObject = undefined
   }
 
-  private removeBitmap = () => {
+  private removeBitmapIfExist = (): void => {
+    if (!this.bitmapText) return
     this.bitmapText.destroy()
     this.bitmapText = undefined
+  }
+
+  private removeGameObjectLineIfExist = (): void => {
+    if (!this._gameObjectLine) return
+    this._gameObjectLine.destroy()
+    this._gameObjectLine = undefined
+  }
+
+  private removeGameObjectLineOriginDotIfExist = (): void => {
+    if (!this._gameObjectLineOriginDot) return
+    this._gameObjectLineOriginDot.destroy()
+    this._gameObjectLineOriginDot = undefined
   }
 
   public render = (factory: Phaser.GameObjects.GameObjectFactory, config: BoxRenderer): Box => {
@@ -110,26 +115,26 @@ export class Box {
   private renderBoxBackground(factory: Phaser.GameObjects.GameObjectFactory, { color, alpha = 1 }: BoxRenderer): Box {
     if (this.graphicsObject) {
       this.graphicsObject.fillStyle(color)
-    } else {
-      const boxXposition = -this._size + this.position.x * this._size
-      const boxYposition = -this._size + this.position.y * this._size
-      this.graphicsObject = factory
-        .graphics({
-          x: boxXposition,
-          y: boxYposition,
-          fillStyle: {
-            color,
-            alpha,
-          },
-        })
-        .fillRect(this._size, this._size, this._size, this._size)
+      return this
     }
+    const boxXposition = -this._size + this.position.x * this._size
+    const boxYposition = -this._size + this.position.y * this._size
+    this.graphicsObject = factory
+      .graphics({
+        x: boxXposition,
+        y: boxYposition,
+        fillStyle: {
+          color,
+          alpha,
+        },
+      })
+      .fillRect(this._size, this._size, this._size, this._size)
     return this
   }
 
   private renderDistances(factory: Phaser.GameObjects.GameObjectFactory, { renderDistances }: BoxRenderer) {
     if (!renderDistances) {
-      if(this.bitmapText) this.removeBitmap()
+      this.removeBitmapIfExist()
       return this
     }
     if (!this.bitmapText) {
@@ -152,25 +157,18 @@ export class Box {
     { renderVectorLines }: BoxRenderer
   ): Box => {
     if (!renderVectorLines || !this.graphicsObject) {
-      if (this._gameObjectLine) {
-        this._gameObjectLine.destroy()
-        this._gameObjectLine = undefined
-      }
-      if (this._gameObjectLineOriginDot) {
-        this._gameObjectLineOriginDot.destroy()
-        this._gameObjectLineOriginDot = undefined
-      }
+      this.removeGameObjectLineIfExist()
+      this.removeGameObjectLineOriginDotIfExist()
       return this
     }
+
+    const { x: forceX, y: forceY } = this.forceVector
+
     if (this._gameObjectLine) {
-      this._gameObjectLine.destroy()
-      this._gameObjectLine = undefined
+      this._gameObjectLine.setTo(0, 0, forceX * Box.FORCE_VECTOR_MULTIPIER, forceY * Box.FORCE_VECTOR_MULTIPIER)
+      return this
     }
-    this._gameObjectLine
-    const {
-      graphicsObject: { x, y },
-      forceVector: { x: forceX, y: forceY },
-    } = this
+    const { x, y } = this.graphicsObject
     const positionModifier: number = this._size * 1.5
     const originX = x + positionModifier
     const originY = y + positionModifier
@@ -179,9 +177,10 @@ export class Box {
       .setOrigin(0, 0)
       .setDepth(1)
       .setLineWidth(0.5)
-    if (!this._gameObjectLineOriginDot) {
+
+    if (!this._gameObjectLineOriginDot)
       this._gameObjectLineOriginDot = factory.circle(originX, originY, 2, 0xffffff).setDepth(2)
-    }
+
     return this
   }
 }

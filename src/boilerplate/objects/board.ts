@@ -4,8 +4,8 @@ import { Utils } from "./utils"
 import { Point } from "./point"
 
 interface BoardDimensions {
-  height: number
-  width: number
+  horizontalBoxes: number
+  verticalBoxes: number
   boxSize?: number
 }
 
@@ -14,7 +14,7 @@ export interface BoardConfig extends BoardDimensions {
   positionsToFill?: Array<Point>
 }
 
-interface initBoxMapConfig extends BoardDimensions {
+interface initBoxMapConfig {
   initAll?: boolean
   positionsToFill?: Array<Point> | undefined
 }
@@ -50,34 +50,34 @@ export class Board {
   public static GOAL_DISTANCE = 0
   private height: number
   private width: number
-  private boxSize: number
+  private _boxSize: number
   private _boxMap: BoxMap
-  private vertBoxes: number
-  private horBoxes: number
+  private _verticalBoxes: number
+  private horizontalBoxes: number
   private _goalPosition: Point
-  constructor({ height, width, boxSize = 20, initAll = true, positionsToFill }: BoardConfig) {
-    this.height = height
+  constructor({ horizontalBoxes, verticalBoxes, boxSize = 20, initAll = true, positionsToFill }: BoardConfig) {
+    this.height = verticalBoxes * boxSize
+    this.width = horizontalBoxes * boxSize
+    this._verticalBoxes = verticalBoxes
+    this.horizontalBoxes = horizontalBoxes
     this._goalPosition = new Point(-1, -1)
-    this.width = width
-    this.boxSize = boxSize
-    this.initBoxMap({ height, width, boxSize, initAll, positionsToFill })
+    this._boxSize = boxSize
+    this.initBoxMap({ initAll, positionsToFill })
   }
 
-  private initBoxMap = ({ height, width, boxSize, initAll, positionsToFill }: initBoxMapConfig): void => {
-    this.vertBoxes = parseInt((height / boxSize) as any)
-    this.horBoxes = parseInt((width / boxSize) as any)
+  private initBoxMap = ({ initAll, positionsToFill }: initBoxMapConfig): void => {
 
     const map = []
     if (initAll) {
-      for (let col = 0; col < this.horBoxes; col++) {
+      for (let col = 0; col < this.horizontalBoxes; col++) {
         map.push([]) // col array
-        for (let row = 0; row < this.vertBoxes; row++) {
-          map[col].push(new Box({ position: new Point(col, row), size: this.boxSize }))
+        for (let row = 0; row < this._verticalBoxes; row++) {
+          map[col].push(new Box({ position: new Point(col, row), size: this._boxSize }))
         }
       }
     } else if (positionsToFill instanceof Array) {
       positionsToFill.forEach(({ x, y }) => {
-        map.push(new Box({ position: new Point(x, y), size: this.boxSize }))
+        map.push(new Box({ position: new Point(x, y), size: this._boxSize }))
       })
     }
     this._boxMap = map.flat()
@@ -121,8 +121,8 @@ export class Board {
   public getBoxPositionByDimensions = (dimensions: Point): Point => {
     const { x, y } = dimensions
     return new Point(
-      x === 0 ? 0 : parseInt((x / this.boxSize) as any),
-      y === 0 ? 0 : parseInt((y / this.boxSize) as any)
+      x === 0 ? 0 : parseInt((x / this._boxSize) as any),
+      y === 0 ? 0 : parseInt((y / this._boxSize) as any)
     )
   }
 
@@ -276,9 +276,9 @@ export class Board {
       })
       .map(({ position }) => position)
     return new Board({
-      height: this.height,
-      width: this.width,
-      boxSize: this.boxSize,
+      verticalBoxes: this._verticalBoxes,
+      horizontalBoxes: this.horizontalBoxes,
+      boxSize: this._boxSize,
       initAll: false,
       positionsToFill: newBoxPositions,
     })
