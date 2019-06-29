@@ -255,7 +255,7 @@ export class Board {
   public calculateForceVectors = () => {
     this._boxMap.forEach((parent: Box) => {
       const { position, distance: parentDistance } = parent
-      const fakeObject: any = { distance: parent.distance + 1 }
+      const fakeObject: any = { distance: parentDistance + 1 }
       const {
         bottom = fakeObject,
         bottomLeft = fakeObject,
@@ -266,8 +266,13 @@ export class Board {
         topLeft = fakeObject,
         topRight = fakeObject,
       }: NamedChildrens = this.getNamedChildrens(parent)
-      parent.forceVector.x = left.distance - right.distance
-      parent.forceVector.y = top.distance - bottom.distance
+      parent.forceVector.x = (left.distance - right.distance) * 0.25
+      parent.forceVector.y = (top.distance - bottom.distance) * 0.25
+      parent.forceVector.y += -(bottomRight.distance - topLeft.distance) * 0.5
+      parent.forceVector.x += -(bottomRight.distance - topLeft.distance) * 0.5
+      parent.forceVector.y += -(bottomLeft.distance - topRight.distance) * 0.5
+      parent.forceVector.x += (bottomLeft.distance - topRight.distance) * 0.5
+      
       // const forceLeftCross: number = topRight.distance - bottomLeft.distance
       // const forceRightCross: number = topLeft.distance - bottomRight.distance
       // parent.forceVector.x += (forceLeftCross * 0.25)
