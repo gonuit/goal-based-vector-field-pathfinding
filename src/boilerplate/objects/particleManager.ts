@@ -4,10 +4,15 @@ import { Point } from "./point"
 import { Board } from "./board"
 import { Box } from "./box"
 
+export interface Inaccuracy {
+  min: number
+  max: number
+}
 interface ParticleManagerConfig {
   amount: number
   initialPosition?: Point
   size?: number
+  inaccuracy?: Inaccuracy
 }
 
 export type Particles = Array<Particle>
@@ -19,13 +24,24 @@ export class ParticleManager {
   private _scene: Scene
   private _initialPosition: Point
   private _group: Phaser.GameObjects.Group
-  constructor(scene: Scene, { amount, size = 5, initialPosition = new Point(0, 0) }: ParticleManagerConfig) {
+  private _inaccuracy: Inaccuracy
+  constructor(
+    scene: Scene,
+    { amount, size = 5, initialPosition = new Point(0, 0), inaccuracy }: ParticleManagerConfig
+  ) {
     this._scene = scene
     this._particles = []
     this._amount = amount
     this._size = size
     this._initialPosition = initialPosition
     this._group = scene.add.group()
+    if (
+      inaccuracy &&
+      (typeof inaccuracy.max != "number" || typeof inaccuracy.min != "number" || inaccuracy.max < inaccuracy.min)
+    ) {
+      throw new Error("bad inaccuracy value")
+    }
+    this._inaccuracy = inaccuracy
     this.initManager()
   }
 
@@ -38,12 +54,18 @@ export class ParticleManager {
     }
   }
 
-  public moveByPath(board: Board) {
-    this._particles.forEach((particle) => {
+  public moveByPath(board: Board): void {
+    this._particles.forEach((particle: Particle) => {
       const { x, y } = particle
       const boxUnderParticle: Box = board.getBoxByDimensions(new Point(x, y))
+      if (!boxUnderParticle) {
+        console.warn("Particle Manager:\n", "Bad particle position\n", "(Inert motion)")
+        particle.moveByVelocity()
+        return
+      }
       particle.setVelocity(boxUnderParticle.forceVector)
-      .moveByVelocity()
+      if (this._inaccuracy) particle.moveWithInaccuracyByVelocity(this._inaccuracy)
+      else particle.moveByVelocity()
     })
   }
 }

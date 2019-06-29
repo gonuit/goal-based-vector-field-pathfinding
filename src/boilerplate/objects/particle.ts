@@ -1,5 +1,7 @@
 import { Point } from "./point"
 import { ForceVector } from "./forceVector"
+import { Utils } from "./utils";
+import { Inaccuracy } from "./particleManager";
 
 export interface ParticleConfig extends GraphicsOptions {
   initialPosition?: Point
@@ -53,6 +55,12 @@ export class Particle extends Phaser.GameObjects.Graphics {
   public moveByVelocity(): Particle {
     this.x += this.velocity.x
     this.y += this.velocity.y
+    return this
+  }
+
+  public moveWithInaccuracyByVelocity(inaccuracy: Inaccuracy): Particle {
+    this.x += this.velocity.x * Utils.getRandomFloat(inaccuracy.max, inaccuracy.min)
+    this.y += this.velocity.y * Utils.getRandomFloat(inaccuracy.max, inaccuracy.min)
     return this
   }
 

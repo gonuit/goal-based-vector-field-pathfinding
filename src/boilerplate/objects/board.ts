@@ -90,7 +90,7 @@ export class Board {
         }
       }
     } else if (positionsToFill instanceof Array) {
-      positionsToFill.forEach(({ x, y }) => {
+      Utils.uniquePointArray(positionsToFill).forEach(({ x, y }) => {
         map.push(new Box({ position: new Point(x, y), size: this._boxSize }))
       })
     }
@@ -200,7 +200,7 @@ export class Board {
       this.setDistances(childrenNodes, ++distance)
       let newChildrenNodes = []
       childrenNodes.forEach(({ position }) => {
-        newChildrenNodes = Utils.unique(newChildrenNodes.concat(this.getBoxChildrens(position)))
+        newChildrenNodes = Utils.uniqueBoxArray(newChildrenNodes.concat(this.getBoxChildrens(position)))
       })
 
       childrenNodes = newChildrenNodes.filter(({ visited }) => !visited)
@@ -268,10 +268,10 @@ export class Board {
       }: NamedChildrens = this.getNamedChildrens(parent)
       parent.forceVector.x = (left.distance - right.distance) * 0.25
       parent.forceVector.y = (top.distance - bottom.distance) * 0.25
-      parent.forceVector.y += -(bottomRight.distance - topLeft.distance) * 0.5
-      parent.forceVector.x += -(bottomRight.distance - topLeft.distance) * 0.5
-      parent.forceVector.y += -(bottomLeft.distance - topRight.distance) * 0.5
-      parent.forceVector.x += (bottomLeft.distance - topRight.distance) * 0.5
+      parent.forceVector.y += -(bottomRight.distance - topLeft.distance) * 0.4
+      parent.forceVector.x += -(bottomRight.distance - topLeft.distance) * 0.4
+      parent.forceVector.y += -(bottomLeft.distance - topRight.distance) * 0.4
+      parent.forceVector.x += (bottomLeft.distance - topRight.distance) * 0.4
     })
   }
 

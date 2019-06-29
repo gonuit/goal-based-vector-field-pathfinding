@@ -1,4 +1,4 @@
-import { Board, BoardRendererConfig } from "../objects/board"
+import { Board, BoardRendererConfig, BoxMap } from "../objects/board"
 import { Point } from "../objects/point"
 import { ParticleManager } from "../objects/particleManager"
 import { Statistics } from "../objects/statistics"
@@ -30,8 +30,8 @@ export class GameScene extends Phaser.Scene {
     this.gameHeight = this.sys.canvas.height
     this.gameWidth = this.sys.canvas.width
     this.stats = new Statistics(this)
-    this.horizontalBoxes = 20
-    this.verticalBoxes = 20
+    this.horizontalBoxes = 21
+    this.verticalBoxes = 21
   }
 
   create(): void {
@@ -52,7 +52,7 @@ export class GameScene extends Phaser.Scene {
       boxSize: this.fieldSize,
       initAll: false,
       positionsToFill: [
-        new Point(9, 0),
+        ...this.initBoardBorders({ horizontalBoxes: this.horizontalBoxes, verticalBoxes: this.verticalBoxes }),
         new Point(9, 1),
         new Point(9, 2),
         new Point(9, 3),
@@ -71,7 +71,6 @@ export class GameScene extends Phaser.Scene {
         new Point(9, 16),
         new Point(9, 17),
 
-        new Point(13, 2),
         new Point(13, 3),
         new Point(13, 4),
         new Point(13, 5),
@@ -89,6 +88,7 @@ export class GameScene extends Phaser.Scene {
         new Point(13, 17),
         new Point(13, 18),
         new Point(13, 19),
+        new Point(13, 20),
 
         new Point(16, 3),
         new Point(17, 3),
@@ -103,10 +103,15 @@ export class GameScene extends Phaser.Scene {
     }).render()
 
     this.validBoard = this.fullBoard.removeFromBoard(this.colisionBoard)
-    this.validBoard.rendererConfig = { color: { r: 0, g: 0, b: 200, a: 1 }, renderVectorLines: true, colorByDistance: true }
+    this.validBoard.rendererConfig = {
+      color: { r: 0, g: 0, b: 200, a: 1 },
+      renderVectorLines: true,
+      colorByDistance: true,
+    }
 
     this.particleManager = new ParticleManager(this, {
       amount: 10,
+      inaccuracy: { min: 0.5, max: 1 },
       initialPosition: new Point(100, 100),
     })
   }
@@ -118,12 +123,29 @@ export class GameScene extends Phaser.Scene {
     const boxExist = this.validBoard.exist(hoverBoxPosition)
     if (boxExist && !this.validBoard.goalPosition.equals(hoverBoxPosition)) {
       this.validBoard = this.validBoard.calculateBoxesDistance(hoverBoxPosition).render()
-    } else if (
-      (this.validBoard.rendererConfig.indicateBoardRefresh && this.validBoard.indicateRefresh)
-    ) {
+    } else if (this.validBoard.rendererConfig.indicateBoardRefresh && this.validBoard.indicateRefresh) {
       this.validBoard = this.validBoard.render()
     }
     this.particleManager.moveByPath(this.validBoard)
+  }
+
+  private initBoardBorders = ({
+    horizontalBoxes,
+    verticalBoxes,
+  }: {
+    horizontalBoxes: number
+    verticalBoxes: number
+  }): Array<Point> => {
+    const tileMap: Array<Point> = []
+    for (let i = 0; i < horizontalBoxes; i++) {
+      tileMap.push(new Point(i, 0))
+      tileMap.push(new Point(i, verticalBoxes - 1))
+    }
+    for(let i = 1; i < verticalBoxes-1; i++) {
+      tileMap.push(new Point(0, i))
+      tileMap.push(new Point(horizontalBoxes - 1, i))
+    }
+    return tileMap
   }
 
   private checkCollision(): void {}
@@ -135,7 +157,10 @@ export class GameScene extends Phaser.Scene {
   private handleKeyboardEvent = (event: KeyboardEvent) => {
     switch (event.key) {
       case "1": {
-        this.validBoard.rendererConfig = { ...this.validBoard.rendererConfig, colorByDistance: !this.validBoard.rendererConfig.colorByDistance }
+        this.validBoard.rendererConfig = {
+          ...this.validBoard.rendererConfig,
+          colorByDistance: !this.validBoard.rendererConfig.colorByDistance,
+        }
         return
       }
       case "2": {
