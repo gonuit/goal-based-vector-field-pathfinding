@@ -1,49 +1,47 @@
-import { Board, BoardRendererConfig, BoxMap } from "../objects/board"
-import { Point } from "../objects/point"
-import { ParticleManager } from "../objects/particleManager"
-import { Statistics } from "../objects/statistics"
+import { Board, BoardRendererConfig, BoxMap } from "../objects/board";
+import { Point } from "../objects/point";
+import { ParticleManager } from "../objects/particleManager";
+import { Statistics } from "../objects/statistics";
 
 export class GameScene extends Phaser.Scene {
   // field and game setting
-  private fieldSize: number
-  private gameHeight: number
-  private gameWidth: number
-  private horizontalBoxes: number
-  private verticalBoxes: number
+  private fieldSize: number;
+  private horizontalBoxes: number;
+  private verticalBoxes: number;
 
-  private stats: Statistics
+  private stats: Statistics;
 
-  private fullBoard: Board
-  private validBoard: Board
-  private colisionBoard: Board
+  private fullBoard: Board;
+  private validBoard: Board;
+  private colisionBoard: Board;
+  private isTrackingPaused: boolean;
 
-  private particleManager: ParticleManager
+  private particleManager: ParticleManager;
 
   constructor() {
     super({
-      key: "GameScene",
-    })
+      key: "GameScene"
+    });
   }
 
   init(): void {
-    this.fieldSize = 40
-    this.gameHeight = this.sys.canvas.height
-    this.gameWidth = this.sys.canvas.width
-    this.stats = new Statistics(this)
-    this.horizontalBoxes = 21
-    this.verticalBoxes = 21
+    this.isTrackingPaused = false;
+    this.fieldSize = 40;
+    this.stats = new Statistics(this);
+    this.horizontalBoxes = 21;
+    this.verticalBoxes = 21;
   }
 
   create(): void {
-    this.stats.displayFPS(true)
+    this.stats.displayFPS(true);
 
-    this.initEvents()
+    this.initEvents();
 
     this.fullBoard = new Board(this, {
       horizontalBoxes: this.horizontalBoxes,
       verticalBoxes: this.verticalBoxes,
-      boxSize: this.fieldSize,
-    })
+      boxSize: this.fieldSize
+    });
 
     this.colisionBoard = new Board(this, {
       horizontalBoxes: this.horizontalBoxes,
@@ -52,7 +50,10 @@ export class GameScene extends Phaser.Scene {
       boxSize: this.fieldSize,
       initAll: false,
       positionsToFill: [
-        ...this.initBoardBorders({ horizontalBoxes: this.horizontalBoxes, verticalBoxes: this.verticalBoxes }),
+        ...this.initBoardBorders({
+          horizontalBoxes: this.horizontalBoxes,
+          verticalBoxes: this.verticalBoxes
+        }),
         new Point(9, 1),
         new Point(9, 2),
         new Point(9, 3),
@@ -98,95 +99,107 @@ export class GameScene extends Phaser.Scene {
         new Point(13, 6),
         new Point(14, 6),
         new Point(15, 6),
-        new Point(16, 6),
-      ],
-    }).render()
+        new Point(16, 6)
+      ]
+    }).render();
 
-    this.validBoard = this.fullBoard.removeFromBoard(this.colisionBoard)
+    this.validBoard = this.fullBoard.removeFromBoard(this.colisionBoard);
     this.validBoard.rendererConfig = {
       color: { r: 0, g: 0, b: 0, a: 1 },
       renderVectorLines: true,
-      colorByDistance: true,
-    }
+      colorByDistance: true
+    };
 
     this.particleManager = new ParticleManager(this, {
       amount: 100,
       inaccuracy: { min: 0.5, max: 1 },
       initialPosition: new Point(100, 100),
       colisionBoard: this.colisionBoard
-    })
+    });
   }
 
   update(time: number): void {
-    this.stats.update(time)
-    const { x: mouseX, y: mouseY } = this.input.mousePointer
-    const hoverBoxPosition: Point = this.validBoard.getBoxPositionByDimensions(new Point(mouseX, mouseY))
-    const boxExist = this.validBoard.exist(hoverBoxPosition)
-    if (boxExist && !this.validBoard.goalPosition.equals(hoverBoxPosition)) {
-      this.validBoard = this.validBoard.calculateBoxesDistance(hoverBoxPosition).render()
-    } else if (this.validBoard.rendererConfig.indicateBoardRefresh && this.validBoard.indicateRefresh) {
-      this.validBoard = this.validBoard.render()
+    this.stats.update(time);
+    if (!this.isTrackingPaused) {
+      const { x: mouseX, y: mouseY } = this.input.mousePointer;
+      const hoverBoxPosition: Point = this.validBoard.getBoxPositionByDimensions(
+        new Point(mouseX, mouseY)
+      );
+      const boxExist = this.validBoard.exist(hoverBoxPosition);
+      if (boxExist && !this.validBoard.goalPosition.equals(hoverBoxPosition)) {
+        this.validBoard = this.validBoard
+          .calculateBoxesDistance(hoverBoxPosition)
+          .render();
+      } else if (
+        this.validBoard.rendererConfig.indicateBoardRefresh &&
+        this.validBoard.indicateRefresh
+      ) {
+        this.validBoard = this.validBoard.render();
+      }
     }
-    this.particleManager.moveByPath(this.validBoard)
+    this.particleManager.moveByPath(this.validBoard);
   }
 
   private initBoardBorders = ({
     horizontalBoxes,
-    verticalBoxes,
+    verticalBoxes
   }: {
-    horizontalBoxes: number
-    verticalBoxes: number
+    horizontalBoxes: number;
+    verticalBoxes: number;
   }): Array<Point> => {
-    const tileMap: Array<Point> = []
+    const tileMap: Array<Point> = [];
     for (let i = 0; i < horizontalBoxes; i++) {
-      tileMap.push(new Point(i, 0))
-      tileMap.push(new Point(i, verticalBoxes - 1))
+      tileMap.push(new Point(i, 0));
+      tileMap.push(new Point(i, verticalBoxes - 1));
     }
-    for(let i = 1; i < verticalBoxes-1; i++) {
-      tileMap.push(new Point(0, i))
-      tileMap.push(new Point(horizontalBoxes - 1, i))
+    for (let i = 1; i < verticalBoxes - 1; i++) {
+      tileMap.push(new Point(0, i));
+      tileMap.push(new Point(horizontalBoxes - 1, i));
     }
-    return tileMap
-  }
-
-  private checkCollision(): void {}
+    return tileMap;
+  };
 
   private initEvents = () => {
-    this.input.keyboard.addListener("keyup", this.handleKeyboardEvent)
-  }
+    this.input.keyboard.addListener("keyup", this.handleKeyboardEvent);
+  };
 
   private handleKeyboardEvent = (event: KeyboardEvent) => {
     switch (event.key) {
       case "1": {
         this.validBoard.rendererConfig = {
           ...this.validBoard.rendererConfig,
-          colorByDistance: !this.validBoard.rendererConfig.colorByDistance,
-        }
-        return
+          colorByDistance: !this.validBoard.rendererConfig.colorByDistance
+        };
+        return;
       }
       case "2": {
         this.validBoard.rendererConfig = {
           ...this.validBoard.rendererConfig,
           renderDistances: !this.validBoard.rendererConfig.renderDistances,
-          renderVectorLines: false,
-        }
-        return
+          renderVectorLines: false
+        };
+        return;
       }
       case "3": {
         this.validBoard.rendererConfig = {
           ...this.validBoard.rendererConfig,
           renderVectorLines: !this.validBoard.rendererConfig.renderVectorLines,
-          renderDistances: false,
-        }
-        return
+          renderDistances: false
+        };
+        return;
       }
       case "4": {
         this.validBoard.rendererConfig = {
           ...this.validBoard.rendererConfig,
-          indicateBoardRefresh: !this.validBoard.rendererConfig.indicateBoardRefresh,
-        }
-        return
+          indicateBoardRefresh: !this.validBoard.rendererConfig
+            .indicateBoardRefresh
+        };
+        return;
+      }
+      case " ": {
+        this.isTrackingPaused = !this.isTrackingPaused
+         return;
       }
     }
-  }
+  };
 }

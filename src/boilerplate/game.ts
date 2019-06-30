@@ -3,9 +3,9 @@ import { BootScene } from "./scenes/bootScene";
 import { GameScene } from "./scenes/gameScene";
 
 const config: GameConfig = {
-  title: "Snake",
+  title: "Goal-Based Vector Field Pathfinding",
   url: "https://github.com/digitsensitive/phaser3-typescript",
-  version: "1.1",
+  version: "0.8",
   type: Phaser.AUTO,
   parent: "game",
   scene: [BootScene, GameScene],
@@ -26,6 +26,5 @@ export class Game extends Phaser.Game {
 }
 
 window.addEventListener("load", () => {
-  const  { offsetHeight: height, offsetWidth: width } = document.getElementById('game')
-  const game = new Game({...config, width, height });
+  const game = new Game({...config, width: 840, height: 840 });
 });

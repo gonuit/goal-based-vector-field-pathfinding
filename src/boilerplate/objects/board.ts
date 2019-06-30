@@ -175,7 +175,7 @@ export class Board {
   public getBoxByPosition = (position: Point): Box =>
     this.exist(position) ? this.boxMap[position.x][position.y] : undefined
 
-  public exist = ({ x, y }: Point): boolean => this.boxMap.length > x && this.boxMap[x].length > y
+  public exist = ({ x, y }: Point): boolean => x >= 0 && y >= 0 && this.boxMap.length > x && this.boxMap[x].length > y &&  this.boxMap[x][y] instanceof Box  
 
   public get boxMap(): BoxMap {
     return this._boxMap
