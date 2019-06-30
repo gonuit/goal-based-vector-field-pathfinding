@@ -20,6 +20,8 @@ interface ParticleManagerConfig {
 export type Particles = Array<Particle>
 
 export class ParticleManager {
+  private static FORCE_PERCENTAGE_AFTER_COLLISION: number = 0.8
+  private static PARTICLE_DISTANCE_AFTER_COLISION: number = 2
   private _particles: Particles
   private _amount: number
   private _size: number
@@ -52,7 +54,8 @@ export class ParticleManager {
   private initManager = () => {
     const { _size: size, _initialPosition: initialPosition } = this
     for (let i = 0; i < this._amount; i++) {
-      const particle = new Particle(this._scene, { initialPosition, size })
+      const particle = new Particle(this._scene, { initialPosition, size, fillStyle: { color: 0xff0000 } })
+      // particle.fillStyle(0xff0000)
       this._group.add(particle)
       this._particles.push(particle)
     }
@@ -76,27 +79,31 @@ export class ParticleManager {
     })
   }
 
-  public checkColisions = (): void => {
+  private checkColisions = (): void => {
     const boxSize = this._colisionBoard.boxSize
     this._particles.forEach((particle) => {
       const boxPosition = this._colisionBoard.getBoxPositionByDimensions(new Point(particle.x, particle.y))
       const { right, left, bottom, top } = this._colisionBoard.getNamedChildrens(boxPosition)
       if (bottom && particle.y + this._size >= bottom.rectanglePosition.y - boxSize / 2) {
-        particle.y = bottom.rectanglePosition.y - boxSize / 2 - this._size - 1
-        particle.velocity = new ForceVector(particle.velocity.x, -particle.velocity.y)
+        particle.y = bottom.rectanglePosition.y - boxSize / 2 - this._size - ParticleManager.PARTICLE_DISTANCE_AFTER_COLISION
+        particle.velocity = new ForceVector(particle.velocity.x, -particle.velocity.y * ParticleManager.FORCE_PERCENTAGE_AFTER_COLLISION)
       }
       if (top && particle.y - this._size <= top.rectanglePosition.y + boxSize / 2) {
-        particle.y = top.rectanglePosition.y + boxSize / 2 + this._size + 1
-        particle.velocity = new ForceVector(particle.velocity.x, -particle.velocity.y)
+        particle.y = top.rectanglePosition.y + boxSize / 2 + this._size + ParticleManager.PARTICLE_DISTANCE_AFTER_COLISION
+        particle.velocity = new ForceVector(particle.velocity.x, -particle.velocity.y * ParticleManager.FORCE_PERCENTAGE_AFTER_COLLISION)
       }
       if (left && particle.x - this._size <= left.rectanglePosition.x + boxSize / 2) {
-        particle.x = left.rectanglePosition.x + boxSize / 2 + this._size + 1
-        particle.velocity = new ForceVector(-particle.velocity.x, particle.velocity.y)
+        particle.x = left.rectanglePosition.x + boxSize / 2 + this._size + ParticleManager.PARTICLE_DISTANCE_AFTER_COLISION
+        particle.velocity = new ForceVector(-particle.velocity.x * ParticleManager.FORCE_PERCENTAGE_AFTER_COLLISION, particle.velocity.y)
       }
       if (right && particle.x + this._size >= right.rectanglePosition.x - boxSize / 2) {
-        particle.x = right.rectanglePosition.x - boxSize / 2 - this._size + 1
-        particle.velocity = new ForceVector(-particle.velocity.x, particle.velocity.y)
+        particle.x = right.rectanglePosition.x - boxSize / 2 - this._size - ParticleManager.PARTICLE_DISTANCE_AFTER_COLISION
+        particle.velocity = new ForceVector(-particle.velocity.x * ParticleManager.FORCE_PERCENTAGE_AFTER_COLLISION, particle.velocity.y)
       }
     })
+  }
+
+  private checkParticleToParticleColisions = () => {
+    // TODO: add colisions between particles
   }
 }

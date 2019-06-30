@@ -46,7 +46,7 @@ export interface BoardRendererConfig extends BoxRenderConfig {
   indicateBoardRefresh?: boolean
 }
 
-export type BoxMap = Array<Box>
+export type BoxMap = Array<Array<Box | undefined>>
 
 export class Board {
   public static GOAL_DISTANCE = 0
@@ -55,7 +55,7 @@ export class Board {
   private _initialRendererConfig: BoardRendererConfig
   private _scene: Scene
   private _boxSize: number
-  private _boxMap: BoxMap
+  private _boxMap: BoxMap // TODO: change to 2 dimensional array
   private _verticalBoxes: number
   private horizontalBoxes: number
   private _goalPosition: Point
@@ -90,11 +90,43 @@ export class Board {
         }
       }
     } else if (positionsToFill instanceof Array) {
+      for (let col = 0; col < this.horizontalBoxes; col++) {
+        map.push([]) // col array
+        for (let row = 0; row < this._verticalBoxes; row++) {
+          map[col].push(undefined)
+        }
+      }
       Utils.uniquePointArray(positionsToFill).forEach(({ x, y }) => {
-        map.push(new Box({ position: new Point(x, y), size: this._boxSize }))
+        map[x][y] = new Box({ position: new Point(x, y), size: this._boxSize })
       })
     }
-    this._boxMap = map.flat()
+    // console.log("mpa", map)
+    this._boxMap = map
+  }
+
+  private forEachBox = (callback: (item: Box) => void): void => {
+    for (let col = 0; col < this.boxMap.length; col++) {
+      for (let row = 0; row < this.boxMap[col].length; row++) {
+        const box = this.boxMap[col][row]
+        if (box) callback(box)
+      }
+    }
+  }
+
+  private mapAllBox = (callback: (item: Box | undefined, x: number, y: number) => Box | undefined): void => {
+    for (let col = 0; col < this.boxMap.length; col++) {
+      for (let row = 0; row < this.boxMap[col].length; row++) {
+        this.boxMap[col][row] = callback(this.boxMap[col][row], row, col)
+      }
+    }
+  }
+
+  private getMaxDistance = (): number => {
+    let max: number = -Infinity
+    this.forEachBox((item: Box) => {
+      if (item.distance > max) max = item.distance
+    })
+    return max
   }
 
   public render(): Board {
@@ -106,11 +138,11 @@ export class Board {
       colorByDistance = false,
     } = this._rendererConfig
     let maxDistance: number
-    if (colorByDistance) maxDistance = Math.max(...this.boxMap.map(({ distance }) => distance))
+    if (colorByDistance) maxDistance = this.getMaxDistance()
 
     this._indicateRefresh = indicateBoardRefresh ? (this._indicateRefresh = !this._indicateRefresh) : false
 
-    this._boxMap.forEach((box) => {
+    this.forEachBox((box) => {
       let color: number
       const { distance } = box
       if (this._indicateRefresh) {
@@ -132,19 +164,18 @@ export class Board {
 
   public getBoxPositionByDimensions = (dimensions: Point): Point => {
     const { x, y } = dimensions
-    return new Point(
-      x === 0 ? 0 : parseInt((x / this._boxSize) as any),
-      y === 0 ? 0 : parseInt((y / this._boxSize) as any)
-    )
+    return new Point(x === 0 ? 0 : Math.trunc(x / this._boxSize), y === 0 ? 0 : Math.trunc(y / this._boxSize))
   }
 
   public getBoxByDimensions = (dimensions: Point): Box => {
-    const boxPosition: Point = this.getBoxPositionByDimensions(dimensions)
-    return this._boxMap.find(({ position }) => position.equals(boxPosition))
+    const { x, y }: Point = this.getBoxPositionByDimensions(dimensions)
+    return this.boxMap.length > x && this.boxMap[x].length > y ? this.boxMap[x][y] : undefined
   }
 
-  public exist = (position: Point): boolean =>
-    this._boxMap.some(({ position: { x: boxX, y: boxY } }) => boxX === position.x && boxY === position.y)
+  public getBoxByPosition = (position: Point): Box =>
+    this.exist(position) ? this.boxMap[position.x][position.y] : undefined
+
+  public exist = ({ x, y }: Point): boolean => this.boxMap.length > x && this.boxMap[x].length > y
 
   public get boxMap(): BoxMap {
     return this._boxMap
@@ -171,26 +202,43 @@ export class Board {
     this.render()
   }
 
-  private getBoxChildrens = ({ x, y }: Point): BoxMap => {
-    const childrenNodes = this.boxMap.filter(({ position: { x: boxX, y: boxY } }) => {
-      return (
-        ((x === boxX + 1 || x === boxX - 1) && (y === boxY + 1 || y === boxY - 1)) ||
-        ((x === boxX && (y === boxY + 1 || y === boxY - 1)) || (y === boxY && (x === boxX + 1 || x === boxX - 1)))
-      )
-    })
-    return childrenNodes
+  private getBoxChildrens = ({ x, y }: Point): Array<Box> => {
+    const leftChildren = this.getBoxByPosition(new Point(x - 1, y))
+    const rightChildren = this.getBoxByPosition(new Point(x + 1, y))
+    const topChildren = this.getBoxByPosition(new Point(x, y - 1))
+    const bottomChildren = this.getBoxByPosition(new Point(x, y + 1))
+    const leftTopChildren = this.getBoxByPosition(new Point(x - 1, y - 1))
+    const rightTopChildren = this.getBoxByPosition(new Point(x + 1, y - 1))
+    const rightBottomChildren = this.getBoxByPosition(new Point(x + 1, y + 1))
+    const leftBottomChildren = this.getBoxByPosition(new Point(x - 1, y + 1))
+    const childrenNodes = [
+      leftChildren,
+      rightChildren,
+      topChildren,
+      bottomChildren,
+      leftTopChildren,
+      leftBottomChildren,
+      rightTopChildren,
+      rightBottomChildren,
+    ]
+    return childrenNodes.filter((childrenNodes) => childrenNodes)
   }
 
   private setGoalDistance = (goalPosition: Point) => {
     this._goalPosition = goalPosition
     const { x: goalX, y: goalY } = goalPosition
-    const goalBox: Box = this.boxMap.find(({ position: { x, y } }) => goalX === x && goalY === y)
-    if (!goalBox) throw new Error("Goal node does not exist")
+    const goalBox: Box = this.boxMap.flat().find((box) => box && goalX === box.position.x && goalY === box.position.y)
+    if (!goalBox) {
+      // TODO: fix error
+      return
+      throw new Error("Goal node does not exist")
+    }
+
     goalBox.distance = Board.GOAL_DISTANCE
     goalBox.visited = true
   }
 
-  private setDistances = (childrens: BoxMap, distance: number) => {
+  private setDistances = (childrens: Array<Box>, distance: number) => {
     childrens.forEach((children: Box) => {
       if (children.visited) return
       children.distance = distance
@@ -199,7 +247,7 @@ export class Board {
   }
 
   private calculateDistance = async (position: Point, distance: number = Board.GOAL_DISTANCE) => {
-    let childrenNodes: BoxMap = this.getBoxChildrens(position).filter(({ visited }) => !visited)
+    let childrenNodes: Array<Box> = this.getBoxChildrens(position).filter(({ visited }) => !visited)
     while (childrenNodes.length > 0) {
       this.setDistances(childrenNodes, ++distance)
       let newChildrenNodes = []
@@ -210,52 +258,21 @@ export class Board {
       childrenNodes = newChildrenNodes.filter(({ visited }) => !visited)
     }
   }
-  public getNamedChildrens = (parentPosition: Point): NamedChildrens => {
-    const childrenNodes: BoxMap = this.getBoxChildrens(parentPosition)
+  public getNamedChildrens = ({ x, y }: Point): NamedChildrens => {
     const namedChildrens: NamedChildrens = {}
-    childrenNodes.forEach((childrenBox: Box) => {
-      const { position: childrenPosition } = childrenBox
-      // 1 if over | -1 if under | 0 if the same line
-      const verticalPosition = parentPosition.verticalPosition(childrenPosition)
-      const horizontalPosition = parentPosition.horizontalPosition(childrenPosition)
-
-      if (horizontalPosition < 0) {
-        // left bottom
-        if (verticalPosition < 0) {
-          namedChildrens.bottomLeft = childrenBox
-          // left top
-        } else if (verticalPosition > 0) {
-          namedChildrens.topLeft = childrenBox
-          // left
-        } else {
-          namedChildrens.left = childrenBox
-        }
-      } else if (horizontalPosition > 0) {
-        // right bottom
-        if (verticalPosition < 0) {
-          namedChildrens.bottomRight = childrenBox
-          // right top
-        } else if (verticalPosition > 0) {
-          namedChildrens.topRight = childrenBox
-          // right
-        } else {
-          namedChildrens.right = childrenBox
-        }
-      } else {
-        // bottom
-        if (verticalPosition < 0) {
-          namedChildrens.bottom = childrenBox
-          // top
-        } else if (verticalPosition > 0) {
-          namedChildrens.top = childrenBox
-        }
-      }
-    })
+    namedChildrens.left = this.getBoxByPosition(new Point(x - 1, y))
+    namedChildrens.right = this.getBoxByPosition(new Point(x + 1, y))
+    namedChildrens.top = this.getBoxByPosition(new Point(x, y - 1))
+    namedChildrens.bottom = this.getBoxByPosition(new Point(x, y + 1))
+    namedChildrens.topLeft = this.getBoxByPosition(new Point(x - 1, y - 1))
+    namedChildrens.topRight = this.getBoxByPosition(new Point(x + 1, y - 1))
+    namedChildrens.bottomRight = this.getBoxByPosition(new Point(x + 1, y + 1))
+    namedChildrens.bottomLeft = this.getBoxByPosition(new Point(x - 1, y + 1))
     return namedChildrens
   }
 
   public calculateForceVectors = () => {
-    this._boxMap.forEach((parent: Box) => {
+    this.forEachBox((parent: Box) => {
       const { position: parentPosition, distance: parentDistance } = parent
       const fakeObject: any = { distance: parentDistance + 1 }
       const {
@@ -286,7 +303,7 @@ export class Board {
   }
 
   public reset = (): Board => {
-    this.boxMap.forEach((box) => {
+    this.forEachBox((box) => {
       box.reset()
     })
     return this
@@ -295,8 +312,9 @@ export class Board {
   public removeFromBoard = (board: Board) => {
     const boxMap = board.boxMap
     const newBoxPositions = this.boxMap
-      .filter(({ position }) => {
-        return !boxMap.some(({ position: positionToRemove }) => position.equals(positionToRemove))
+      .flat()
+      .filter((box: Box | undefined) => {
+        return box && !boxMap.flat().some((boxToRemove) => boxToRemove && box.position.equals(boxToRemove.position))
       })
       .map(({ position }) => position)
     return new Board(this._scene, {

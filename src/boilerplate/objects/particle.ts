@@ -2,6 +2,7 @@ import { Point } from "./point"
 import { ForceVector } from "./forceVector"
 import { Utils } from "./utils";
 import { Inaccuracy } from "./particleManager";
+import { Color } from "./color";
 
 export interface ParticleConfig extends GraphicsOptions {
   initialPosition?: Point
@@ -31,7 +32,8 @@ export class Particle extends Phaser.GameObjects.Graphics {
   }
 
   private initElement() {
-    this.fillStyle(0x61e85b, 0.8)
+    // this.fillStyle(Color.rgbToHex(Utils.getRandomInt(100,255),Utils.getRandomInt(100,255),Utils.getRandomInt(100,255)), 0.8)
+    this.fillStyle(0xff0000, 0.8)
     this.fillCircle(0, 0, this._size)
     this.setDepth(10)
     this.scene.add.existing(this)
