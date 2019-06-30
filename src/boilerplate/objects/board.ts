@@ -158,6 +158,10 @@ export class Board {
     return this._indicateRefresh
   }
 
+  public get boxSize(): number {
+    return this._boxSize
+  }
+
   public get rendererConfig() {
     return this._rendererConfig
   }
@@ -206,9 +210,7 @@ export class Board {
       childrenNodes = newChildrenNodes.filter(({ visited }) => !visited)
     }
   }
-
-  private getNamedChildrens = (parent: Box): NamedChildrens => {
-    const { position: parentPosition } = parent
+  public getNamedChildrens = (parentPosition: Point): NamedChildrens => {
     const childrenNodes: BoxMap = this.getBoxChildrens(parentPosition)
     const namedChildrens: NamedChildrens = {}
     childrenNodes.forEach((childrenBox: Box) => {
@@ -254,7 +256,7 @@ export class Board {
 
   public calculateForceVectors = () => {
     this._boxMap.forEach((parent: Box) => {
-      const { position, distance: parentDistance } = parent
+      const { position: parentPosition, distance: parentDistance } = parent
       const fakeObject: any = { distance: parentDistance + 1 }
       const {
         bottom = fakeObject,
@@ -265,7 +267,7 @@ export class Board {
         top = fakeObject,
         topLeft = fakeObject,
         topRight = fakeObject,
-      }: NamedChildrens = this.getNamedChildrens(parent)
+      }: NamedChildrens = this.getNamedChildrens(parentPosition)
       parent.forceVector.x = (left.distance - right.distance) * 0.25
       parent.forceVector.y = (top.distance - bottom.distance) * 0.25
       parent.forceVector.y += -(bottomRight.distance - topLeft.distance) * 0.4

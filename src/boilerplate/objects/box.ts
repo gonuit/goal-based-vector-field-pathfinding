@@ -71,6 +71,11 @@ export class Box {
     this._forceVector = value
   }
 
+  public get rectanglePosition(): Point {
+    if(!this._rectangleObject) return undefined
+    return new Point(this._rectangleObject.x, this._rectangleObject.y)
+  }
+
   public reset() {
     this._visited = false
     this._distance = 0

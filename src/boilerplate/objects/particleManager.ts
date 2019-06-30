@@ -1,8 +1,9 @@
 import { Particle } from "./particle"
-import { Scene } from "phaser"
+import { Scene, RIGHT } from "phaser"
 import { Point } from "./point"
 import { Board } from "./board"
 import { Box } from "./box"
+import { ForceVector } from "./forceVector"
 
 export interface Inaccuracy {
   min: number
@@ -67,12 +68,35 @@ export class ParticleManager {
         return
       }
       particle.setVelocity(boxUnderParticle.forceVector)
+    })
+    this.checkColisions()
+    this._particles.forEach((particle: Particle) => {
       if (this._inaccuracy) particle.moveWithInaccuracyByVelocity(this._inaccuracy)
       else particle.moveByVelocity()
     })
   }
 
   public checkColisions = (): void => {
-    
+    const boxSize = this._colisionBoard.boxSize
+    this._particles.forEach((particle) => {
+      const boxPosition = this._colisionBoard.getBoxPositionByDimensions(new Point(particle.x, particle.y))
+      const { right, left, bottom, top } = this._colisionBoard.getNamedChildrens(boxPosition)
+      if (bottom && particle.y + this._size >= bottom.rectanglePosition.y - boxSize / 2) {
+        particle.y = bottom.rectanglePosition.y - boxSize / 2 - this._size - 1
+        particle.velocity = new ForceVector(particle.velocity.x, -particle.velocity.y)
+      }
+      if (top && particle.y - this._size <= top.rectanglePosition.y + boxSize / 2) {
+        particle.y = top.rectanglePosition.y + boxSize / 2 + this._size + 1
+        particle.velocity = new ForceVector(particle.velocity.x, -particle.velocity.y)
+      }
+      if (left && particle.x - this._size <= left.rectanglePosition.x + boxSize / 2) {
+        particle.x = left.rectanglePosition.x + boxSize / 2 + this._size + 1
+        particle.velocity = new ForceVector(-particle.velocity.x, particle.velocity.y)
+      }
+      if (right && particle.x + this._size >= right.rectanglePosition.x - boxSize / 2) {
+        particle.x = right.rectanglePosition.x - boxSize / 2 - this._size + 1
+        particle.velocity = new ForceVector(-particle.velocity.x, particle.velocity.y)
+      }
+    })
   }
 }

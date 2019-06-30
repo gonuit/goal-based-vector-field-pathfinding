@@ -52,6 +52,10 @@ export class Particle extends Phaser.GameObjects.Graphics {
     return this._velocity
   }
 
+  public set velocity(value: ForceVector) {
+    this._velocity = value
+  }
+
   public moveByVelocity(): Particle {
     this.x += this.velocity.x
     this.y += this.velocity.y
