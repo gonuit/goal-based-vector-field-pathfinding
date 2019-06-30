@@ -106,8 +106,8 @@ export class GameScene extends Phaser.Scene {
     this.validBoard = this.fullBoard.removeFromBoard(this.colisionBoard);
     this.validBoard.rendererConfig = {
       color: { r: 0, g: 0, b: 0, a: 1 },
-      renderVectorLines: true,
-      colorByDistance: true
+      renderVectorLines: false,
+      colorByDistance: false
     };
 
     this.particleManager = new ParticleManager(this, {
