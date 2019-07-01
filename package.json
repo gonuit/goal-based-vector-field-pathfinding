@@ -29,7 +29,7 @@
     "phaser": "3.16.2"
   },
   "scripts": {
-    "dev": "webpack --mode development && webpack-dev-server --mode development --host 0.0.0.0",
+    "dev": "webpack --mode development && webpack-dev-server --mode development",
     "build": "webpack --mode production && webpack-dev-server --mode production --host 0.0.0.0"
   },
   "repository": {
