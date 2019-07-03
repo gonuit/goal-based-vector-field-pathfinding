@@ -4,11 +4,6 @@ import { Point } from "./point";
 import { Board } from "./board";
 import { Box } from "./box";
 import { ForceVector } from "./forceVector";
-// worker
-
-import ParticleHelper = require("worker-loader?publicPath=dist/!../workers/worker");
-import { WorkerThread } from "./workerThread";
-import { ParticleThread } from "./ParticleThread";
 
 export interface Inaccuracy {
   min: number;
@@ -37,7 +32,6 @@ export class ParticleManager {
   private _inaccuracy: Inaccuracy;
   private _colisionBoard: Board;
   private _numberOfCreatedWorkers: number;
-  private _webWorkers: Array<ParticleThread>;
   constructor(
     scene: Scene,
     {
@@ -75,24 +69,8 @@ export class ParticleManager {
         size,
         fillStyle: { color: 0xff0000 }
       });
-      // particle.fillStyle(0xff0000)
       this._group.add(particle);
       this._particles.push(particle);
-    }
-    this.initWorkers();
-  };
-
-  private initWorkers = async () => {
-    this._numberOfCreatedWorkers = Math.round(
-      this._amount / ParticleManager.PARTICLES_PER_WORKER
-    );
-    this._webWorkers = [];
-
-    for (let i = 0; i < this._numberOfCreatedWorkers; i++) {
-      const thread = new ParticleThread();
-      this._webWorkers.push(thread);
-      const x = await thread.start(JSON.parse(JSON.stringify(this._particles)));
-      console.log('x',x)
     }
   };
 

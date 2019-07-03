@@ -55,9 +55,9 @@ export class Board {
   private _initialRendererConfig: BoardRendererConfig
   private _scene: Scene
   private _boxSize: number
-  private _boxMap: BoxMap // TODO: change to 2 dimensional array
+  private _boxMap: BoxMap
   private _verticalBoxes: number
-  private horizontalBoxes: number
+  private _horizontalBoxes: number
   private _goalPosition: Point
   constructor(
     scene: Scene,
@@ -74,7 +74,7 @@ export class Board {
     this._rendererConfig = initialRendererConfig
     this._initialRendererConfig = initialRendererConfig
     this._verticalBoxes = verticalBoxes
-    this.horizontalBoxes = horizontalBoxes
+    this._horizontalBoxes = horizontalBoxes
     this._goalPosition = new Point(-1, -1)
     this._boxSize = boxSize
     this.initBoxMap({ initAll, positionsToFill })
@@ -83,14 +83,14 @@ export class Board {
   private initBoxMap = ({ initAll, positionsToFill }: initBoxMapConfig): void => {
     const map = []
     if (initAll) {
-      for (let col = 0; col < this.horizontalBoxes; col++) {
+      for (let col = 0; col < this._horizontalBoxes; col++) {
         map.push([]) // col array
         for (let row = 0; row < this._verticalBoxes; row++) {
           map[col].push(new Box({ position: new Point(col, row), size: this._boxSize }))
         }
       }
     } else if (positionsToFill instanceof Array) {
-      for (let col = 0; col < this.horizontalBoxes; col++) {
+      for (let col = 0; col < this._horizontalBoxes; col++) {
         map.push([]) // col array
         for (let row = 0; row < this._verticalBoxes; row++) {
           map[col].push(undefined)
@@ -320,7 +320,7 @@ export class Board {
     return new Board(this._scene, {
       initialRendererConfig: this._initialRendererConfig,
       verticalBoxes: this._verticalBoxes,
-      horizontalBoxes: this.horizontalBoxes,
+      horizontalBoxes: this._horizontalBoxes,
       boxSize: this._boxSize,
       initAll: false,
       positionsToFill: newBoxPositions,

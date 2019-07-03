@@ -2,6 +2,7 @@ import { Board, BoardRendererConfig, BoxMap } from "../objects/board";
 import { Point } from "../objects/point";
 import { ParticleManager } from "../objects/particleManager";
 import { Statistics } from "../objects/statistics";
+import { ParticleThreadsManager } from "../objects/particleThreadsManager";
 
 export class GameScene extends Phaser.Scene {
   // field and game setting
@@ -11,11 +12,11 @@ export class GameScene extends Phaser.Scene {
 
   private stats: Statistics;
 
-  private fullBoard: Board;
   private validBoard: Board;
   private colisionBoard: Board;
   private isTrackingPaused: boolean;
 
+  private particleThreadsManager: ParticleThreadsManager;
   private particleManager: ParticleManager;
 
   constructor() {
@@ -36,12 +37,6 @@ export class GameScene extends Phaser.Scene {
     this.stats.displayFPS(true);
 
     this.initEvents();
-
-    this.fullBoard = new Board(this, {
-      horizontalBoxes: this.horizontalBoxes,
-      verticalBoxes: this.verticalBoxes,
-      boxSize: this.fieldSize
-    });
 
     this.colisionBoard = new Board(this, {
       horizontalBoxes: this.horizontalBoxes,
@@ -103,7 +98,12 @@ export class GameScene extends Phaser.Scene {
       ]
     }).render();
 
-    this.validBoard = this.fullBoard.removeFromBoard(this.colisionBoard);
+    this.validBoard = new Board(this, {
+      horizontalBoxes: this.horizontalBoxes,
+      verticalBoxes: this.verticalBoxes,
+      boxSize: this.fieldSize
+    }).removeFromBoard(this.colisionBoard);
+
     this.validBoard.rendererConfig = {
       color: { r: 0, g: 0, b: 0, a: 1 },
       renderVectorLines: false,
@@ -115,6 +115,12 @@ export class GameScene extends Phaser.Scene {
       inaccuracy: { min: 0.5, max: 1 },
       initialPosition: new Point(100, 100),
       colisionBoard: this.colisionBoard
+    });
+
+    this.particleThreadsManager = new ParticleThreadsManager({
+      board: this.validBoard,
+      colisionBoard: this.colisionBoard,
+      particleManager: this.particleManager,
     });
   }
 
@@ -197,8 +203,8 @@ export class GameScene extends Phaser.Scene {
         return;
       }
       case " ": {
-        this.isTrackingPaused = !this.isTrackingPaused
-         return;
+        this.isTrackingPaused = !this.isTrackingPaused;
+        return;
       }
     }
   };
