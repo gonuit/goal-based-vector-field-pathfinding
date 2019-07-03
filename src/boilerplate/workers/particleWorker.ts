@@ -1,42 +1,45 @@
-import { Box } from "../objects/box";
 import { Board } from "../objects/board";
-import { Particle } from "../objects/particle";
-import { Point } from "../objects/point";
+import { PTMsgType } from "../objects/ParticleThread";
+import { WorkerParticle, WorkerParticles } from "./objects/workerParticle";
 
 // Worker.ts
 const ctx: Worker = self as any;
 
-const moveByPath = (board: Board): void => {
-  this._particles.forEach((particle: Particle) => {
-    const { x, y } = particle;
+class ParticleWorker {
+  private _board: Board;
+  private _particles: WorkerParticles;
 
-    const boxUnderParticle: Box = board.getBoxByDimensions(new Point(x, y));
-    if (!boxUnderParticle) {
-      console.warn(
-        "Particle Manager:\n",
-        "Bad particle position\n",
-        "(Inert motion)"
-      );
-      particle.moveByVelocity();
-      return;
+  constructor() {
+    this._particles = [];
+  }
+
+  public initParticles = (array: Array<number>, length: number) => {
+    for (let i = 0; i < length; i++) {
+      const x: number = array[i * 2];
+      const y: number = array[i * 2 + 1];
+      this._particles.push(new WorkerParticle(x, y));
     }
-    particle.setVelocity(boxUnderParticle.forceVector);
-  });
-  this.checkColisions();
-
-  this._particles.forEach((particle: Particle) => {
-    if (this._inaccuracy)
-      particle.moveWithInaccuracyByVelocity(this._inaccuracy);
-    else particle.moveByVelocity();
-  });
+    console.log(this._particles)
+  };
 }
 
-onmessage = function ({ data }) {
-  console.log('ina', data)
-  ctx.postMessage({ data });
+const particleWorker = new ParticleWorker();
+
+onmessage = function({ data }) {
+  console.log("worker_data", data);
+  const buff = new Float64Array(data.buff);
+  const [type, length, ...array] = buff;
+  console.log(buff);
+
+  switch (type) {
+    case PTMsgType.init: {
+      particleWorker.initParticles(array, length);
+      const initDoneBuffer: ArrayBuffer = new Float64Array([PTMsgType.initDone])
+        .buffer;
+      ctx.postMessage({ buff: initDoneBuffer }, [initDoneBuffer]);
+      return;
+    }
+  }
 };
 
-
 // Post data to parent thread
-
-

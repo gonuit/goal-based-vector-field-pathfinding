@@ -20,7 +20,6 @@ interface ParticleManagerConfig {
 export type Particles = Array<Particle>;
 
 export class ParticleManager {
-  private static PARTICLES_PER_WORKER: number = 100;
   private static FORCE_PERCENTAGE_AFTER_COLLISION: number = 0.8;
   private static PARTICLE_DISTANCE_AFTER_COLISION: number = 2;
   private _particles: Particles;
@@ -31,7 +30,6 @@ export class ParticleManager {
   private _group: Phaser.GameObjects.Group;
   private _inaccuracy: Inaccuracy;
   private _colisionBoard: Board;
-  private _numberOfCreatedWorkers: number;
   constructor(
     scene: Scene,
     {
@@ -174,4 +172,8 @@ export class ParticleManager {
   private checkParticleToParticleColisions = () => {
     // TODO: add colisions between particles
   };
+
+  get particles(): Particles {
+    return this._particles
+  }
 }

@@ -2,12 +2,16 @@ import { Point } from "./point"
 import { ForceVector } from "./forceVector"
 import { Utils } from "./utils";
 import { Inaccuracy } from "./particleManager";
-import { Color } from "./color";
 
 export interface ParticleConfig extends GraphicsOptions {
   initialPosition?: Point
   size?: number
   mass?: number
+}
+
+export interface ParticlePositionObject {
+  x: number,
+  y: number,
 }
 
 export class Particle extends Phaser.GameObjects.Graphics {
@@ -75,4 +79,9 @@ export class Particle extends Phaser.GameObjects.Graphics {
     this.y = y
     return this
   }
+
+  public toParticlePositionObject = () => ({
+    x: this.x,
+    y: this.y,
+  })
 }
