@@ -1,4 +1,7 @@
 export enum PTMsgType {
   init,
-  initDone
+  initDone,
+  setVectors,
+  setVectorsDone,
+  updatePosition,
 }

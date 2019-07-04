@@ -7,6 +7,7 @@ interface ShallowBox {
 
 export class WorkerShallowBoard {
   private _boxSize: number;
+  private _boxCount: number;
   private _verticalBoxes: number;
   private _horizontalBoxes: number;
   private shallowBoxMap: Array<Array<ShallowBox>>;
@@ -15,10 +16,13 @@ export class WorkerShallowBoard {
       horizontalBoxes,
       verticalBoxes,
       boxSize,
+      boxCount,
       ...boxMap
     ] = new Float64Array(boardArrayBuffer);
     this._horizontalBoxes = horizontalBoxes;
-    (this._verticalBoxes = verticalBoxes), (this._boxSize = boxSize);
+    this._boxCount = boxCount;
+    this._verticalBoxes = verticalBoxes;
+    this._boxSize = boxSize;
 
     this.initShallowBoxMap(boxMap);
   }
@@ -29,6 +33,7 @@ export class WorkerShallowBoard {
       this.shallowBoxMap[col] = new Array(this._verticalBoxes);
     }
     this.setShallowBoxMap(boxMap);
+    console.log('initialized', this)
   };
 
   public setShallowBoxMap = (boxMap: Array<number> | Float64Array): void => {

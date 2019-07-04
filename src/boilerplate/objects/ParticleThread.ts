@@ -44,12 +44,18 @@ export class ParticleThread {
         return;
       }
       default: {
-        console.log("worker_message_data", data);
         console.timeEnd("1");
+        console.log("worker_message_data", data);
         return;
       }
     }
   };
+
+  updateBoardVectors = () => {
+    const validBoardBuffer: ArrayBuffer =  this._validBoard.toArrayBuffer();
+    console.time("1");
+    this._worker.postMessage({ buff: [PTMsgType.setVectors], validBoardBuffer, }, [validBoardBuffer])
+  }
 
   private particlesToArrayBuffer = (): ArrayBuffer => {
     const arrayOfParticles = new Array(this._particles.length * 2 + 2);

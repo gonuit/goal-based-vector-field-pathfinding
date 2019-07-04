@@ -27,7 +27,7 @@ export class ParticleThreadsManager {
   private _colisionBoard: Board;
   private _particleManager: ParticleManager;
   private _numberOfThreads: number;
-  private _boxesLocations: BoxesLocations;
+  private _particleThreads: Array<ParticleThread>
 
   private _particlesSubArrays: Array<Particles>;
   constructor({
@@ -36,7 +36,6 @@ export class ParticleThreadsManager {
     particleManager,
     numberOfThreads = ParticleThreadsManager.BASIC_THREAD_COUNT
   }: ParticleThreadsManagerConfig) {
-    console.log("ParticleThreadsManager constructor");
     this._board = board;
     this._colisionBoard = colisionBoard;
     this._particleManager = particleManager;
@@ -66,6 +65,7 @@ export class ParticleThreadsManager {
     }
   };
   private initWebWorkers = () => {
+    this._particleThreads = new Array(this._numberOfThreads)
     for (let i = 0; i < this._numberOfThreads; i++) {
       const particleThread: ParticleThread = new ParticleThread({
         particles: this._particlesSubArrays[i],
@@ -73,6 +73,13 @@ export class ParticleThreadsManager {
         colisionBoard: this._colisionBoard
       });
       particleThread.init();
+      this._particleThreads[i] = particleThread
     }
   };
+
+  public updateBoardVectors = () => {
+    for(let i = 0; i < this._particleThreads.length; i++) {
+      this._particleThreads[i].updateBoardVectors()
+    }
+  }
 }

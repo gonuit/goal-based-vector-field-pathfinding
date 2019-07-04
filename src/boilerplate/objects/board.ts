@@ -366,11 +366,12 @@ export class Board {
   };
 
   public toArrayBuffer = (): ArrayBuffer => {
-    const offset: number = 3
+    const offset: number = 4
     const array: Array<any> = new Array((this._boxCount * 4) + offset);
     array[0] = this._horizontalBoxes
     array[1] = this._verticalBoxes
     array[2] = this._boxSize
+    array[3] = this._boxCount
     let i: number = 0;
     this.forEachBox(
       ({ position: { x, y }, forceVector: { x: forceX, y: forceY } }: Box) => {

@@ -120,10 +120,10 @@ export class GameScene extends Phaser.Scene {
     this.particleThreadsManager = new ParticleThreadsManager({
       board: this.validBoard,
       colisionBoard: this.colisionBoard,
-      particleManager: this.particleManager,
+      particleManager: this.particleManager
     });
 
-    this.validBoard.toArrayBuffer()
+    this.validBoard.toArrayBuffer();
   }
 
   update(time: number): void {
@@ -138,6 +138,7 @@ export class GameScene extends Phaser.Scene {
         this.validBoard = this.validBoard
           .calculateBoxesDistance(hoverBoxPosition)
           .render();
+        this.particleThreadsManager.updateBoardVectors();
       } else if (
         this.validBoard.rendererConfig.indicateBoardRefresh &&
         this.validBoard.indicateRefresh
