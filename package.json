@@ -1,21 +1,14 @@
 {
-  "name": "phaser3-typescript",
+  "name": "goal-based-pathfinding",
   "version": "1.2.5",
-  "description": "Boilerplate, Game Examples, Cheat Sheets and Tutorials for Phaser 3 in TypeScript",
+  "description": "Goal based pathfindig writen in TypeScript (JavaScript)",
   "keywords": [
-    "Phaser",
-    "Phaser 3",
-    "Phaser3",
-    "Html5-game",
-    "Phaser-boilerplate",
-    "TypeScript",
-    "Webpack",
-    "Tutorials",
-    "Phaser-tutorial",
-    "Game Examples",
-    "Phaser-game",
-    "Phaser-framework",
-    "Phaser3-example"
+    "pixi.js",
+    "pathfinding",
+    "pathfinder",
+    "goal based pathfinder",
+    "klyta",
+    "klyta.it"
   ],
   "devDependencies": {
     "@types/pixi.js": "^4.8.8",
