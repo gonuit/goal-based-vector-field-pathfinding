@@ -1,8 +1,9 @@
-interface ShallowBox {
+import { ForceVector } from "../objects/forceVector";
+
+export interface ShallowBox {
   positionX: number;
   positionY: number;
-  forceX: number;
-  forceY: number;
+  forceVector: ForceVector
 }
 
 export class WorkerShallowBoard {
@@ -46,9 +47,22 @@ export class WorkerShallowBoard {
       this.shallowBoxMap[positionX][positionY] = {
         positionX,
         positionY,
-        forceX,
-        forceY
+        forceVector: new ForceVector(forceX, forceY)
       };
     }
+  };
+
+  public getBoxPositionByDimensions = (x, y): { x: number, y: number } => {
+    return ({
+      x: x === 0 ? 0 : Math.trunc(x / this._boxSize),
+      y: y === 0 ? 0 : Math.trunc(y / this._boxSize)
+    });
+  };
+
+  public getBoxByDimensions = (dimX, dimY): ShallowBox => {
+    const { x, y } = this.getBoxPositionByDimensions(dimX,dimY);
+    return this.shallowBoxMap.length > x && this.shallowBoxMap[x].length > y
+      ? this.shallowBoxMap[x][y]
+      : undefined;
   };
 }

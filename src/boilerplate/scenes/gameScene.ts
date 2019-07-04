@@ -146,7 +146,8 @@ export class GameScene extends Phaser.Scene {
         this.validBoard = this.validBoard.render();
       }
     }
-    this.particleManager.moveByPath(this.validBoard);
+    this.particleThreadsManager.updateParticlesPositions()
+    // this.particleManager.moveByPath(this.validBoard);
   }
 
   private initBoardBorders = ({

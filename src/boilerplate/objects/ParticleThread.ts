@@ -23,15 +23,14 @@ export class ParticleThread {
 
   public init = () => {
     this.initListeners();
-    const validBoardBuffer: ArrayBuffer =  this._validBoard.toArrayBuffer();
-    const colisionBoardBuffer: ArrayBuffer =  this._colisionBoard.toArrayBuffer();
+    const validBoardBuffer: ArrayBuffer = this._validBoard.toArrayBuffer();
+    const colisionBoardBuffer: ArrayBuffer = this._colisionBoard.toArrayBuffer();
     const particlesArrayBuffer: ArrayBuffer = this.particlesToArrayBuffer();
     console.time("1");
-    this._worker.postMessage({ buff: particlesArrayBuffer, validBoardBuffer, colisionBoardBuffer }, [
-      particlesArrayBuffer,
-      validBoardBuffer,
-      colisionBoardBuffer
-    ]);
+    this._worker.postMessage(
+      { buff: particlesArrayBuffer, validBoardBuffer, colisionBoardBuffer },
+      [particlesArrayBuffer, validBoardBuffer, colisionBoardBuffer]
+    );
   };
 
   private initListeners = () => {
@@ -39,23 +38,56 @@ export class ParticleThread {
   };
 
   private handleMessage = ({ data }: MessageEvent) => {
-    switch (data.type) {
+    const [type, ...rest] = new Float64Array(data.buff);
+    switch (type) {
       case PTMsgType.initDone: {
+        return;
+      }
+      case PTMsgType.setVectorsDone: {
+        console.log("vectors set");
+        return;
+      }
+      case PTMsgType.updatedPositions: {
+        console.log("updated positions ");
+        this.updateParticleGameObjectsPositons(rest);
         return;
       }
       default: {
         console.timeEnd("1");
-        console.log("worker_message_data", data);
+        console.log("worker_message_data", new Float64Array(data.buff));
         return;
       }
     }
   };
 
-  updateBoardVectors = () => {
-    const validBoardBuffer: ArrayBuffer =  this._validBoard.toArrayBuffer();
+  private updateParticleGameObjectsPositons = (
+    serializedParticles: Array<number>
+  ) => {
+    const offset = 1
+    for (let i = 0; i < serializedParticles.length / 4; i++) {
+      const firstElement = i * 2 + offset;
+      const x: number = serializedParticles[firstElement]
+      const y: number = serializedParticles[firstElement + 1]
+      this._particles[i].x = x
+      this._particles[i].y = y
+    }
+  };
+
+  public updateBoardVectors = () => {
+    const validBoardBuffer: ArrayBuffer = this._validBoard.toArrayBuffer();
     console.time("1");
-    this._worker.postMessage({ buff: [PTMsgType.setVectors], validBoardBuffer, }, [validBoardBuffer])
-  }
+    const type = new Float64Array([PTMsgType.setVectors]).buffer;
+    this._worker.postMessage({ buff: type, validBoardBuffer }, [
+      validBoardBuffer,
+      type
+    ]);
+  };
+
+  public updateParticlesPositions = () => {
+    const buff: ArrayBuffer = new Float64Array([PTMsgType.updatePositions])
+      .buffer;
+    this._worker.postMessage({ buff }, [buff]);
+  };
 
   private particlesToArrayBuffer = (): ArrayBuffer => {
     const arrayOfParticles = new Array(this._particles.length * 2 + 2);

@@ -1,10 +1,10 @@
-import { Board } from "../objects/board";
-import {
-  WorkerParticle,
-  WorkerParticles
-} from "../workersObjects/workerParticle";
 import { PTMsgType } from "../workersObjects/PTMsgType";
-import { WorkerShallowBoard } from "../workersObjects/workerShallowBoard";
+import {
+  WorkerShallowBoard,
+  ShallowBox
+} from "../workersObjects/workerShallowBoard";
+import { ShallowParticle } from "../workersObjects/shallowParticle";
+import { Point } from "../objects/point";
 
 // // Worker.ts
 const ctx: Worker = self as any;
@@ -12,7 +12,7 @@ const ctx: Worker = self as any;
 class ParticleWorker {
   private _board: WorkerShallowBoard;
   private _colisionBoard: WorkerShallowBoard;
-  private _particles: WorkerParticles;
+  private _particles: Array<ShallowParticle>;
 
   constructor() {
     this._particles = [];
@@ -22,7 +22,9 @@ class ParticleWorker {
     for (let i = 0; i < length; i++) {
       const x: number = array[i * 2];
       const y: number = array[i * 2 + 1];
-      this._particles.push(new WorkerParticle(x, y));
+      this._particles.push(
+        new ShallowParticle({ initialPosition: new Point(x, y) })
+      );
     }
   };
   public initValidBoard = (buffer: ArrayBuffer) => {
@@ -44,15 +46,48 @@ class ParticleWorker {
     this._board.setShallowBoxMap(new Float64Array(boxMap));
   };
 
-  public updateParticlesPositions = () => {
+  private serializeParticles = (): ArrayBuffer => {
+    const offset: number = 2;
+    const array = new Array(this._particles.length + offset);
+    array[0] = PTMsgType.updatedPositions;
+    array[1] = this._particles.length;
+    for (let i = 0; i < this._particles.length; i++) {
+      const particle = this._particles[i];
+      const firstElement = i * 2 + offset;
+      array[firstElement] = particle.x;
+      array[firstElement + 1] = particle.y;
+    }
+    return new Float64Array(array).buffer;
+  };
 
-  }
+  public updateParticlesPositions = () => {
+    for (let i = 0; i < this._particles.length; i++) {
+      const particle: ShallowParticle = this._particles[i];
+      const { x, y } = particle;
+
+      const boxUnderParticle: ShallowBox = this._board.getBoxByDimensions(x, y);
+      if (!boxUnderParticle) {
+        console.warn(
+          "Particle Worker:\n",
+          "Bad particle position\n",
+          "(Inert motion)"
+        );
+        particle.moveByVelocity();
+        return;
+      }
+      particle
+        .setVelocity(boxUnderParticle.forceVector)
+        .moveWithInaccuracyByVelocity({ min: 0.5, max: 1 });
+    }
+    // this.checkColisions();
+    return this.serializeParticles();
+  };
 }
 
 const particleWorker = new ParticleWorker();
 
 onmessage = function({ data }) {
-  console.log("worker_data", data);
+  // console.log("worker_data", data);
   const buff = new Float64Array(data.buff);
   const type: number = buff[0];
 
@@ -68,13 +103,16 @@ onmessage = function({ data }) {
       return;
     }
     case PTMsgType.setVectors: {
-      particleWorker.setVectors(data.validBoardBuffer)
-      const vectorsDoneBuffer: ArrayBuffer = new Float64Array([PTMsgType.setVectorsDone])
-        .buffer;
+      particleWorker.setVectors(data.validBoardBuffer);
+      const vectorsDoneBuffer: ArrayBuffer = new Float64Array([
+        PTMsgType.setVectorsDone
+      ]).buffer;
       ctx.postMessage({ buff: vectorsDoneBuffer }, [vectorsDoneBuffer]);
     }
-    case PTMsgType.updatePosition: {
-      const newParticlePositions = particleWorker.updateParticlesPositions()
+    case PTMsgType.updatePositions: {
+      const newParticlePositionsBuffer: ArrayBuffer = particleWorker.updateParticlesPositions();
+      if(newParticlePositionsBuffer) ctx.postMessage({ buff: newParticlePositionsBuffer }, [newParticlePositionsBuffer])
+    } default: {
     }
   }
 };

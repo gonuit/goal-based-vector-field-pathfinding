@@ -82,4 +82,10 @@ export class ParticleThreadsManager {
       this._particleThreads[i].updateBoardVectors()
     }
   }
+
+  public updateParticlesPositions = () => {
+    for(let i = 0; i < this._particleThreads.length; i++) {
+      this._particleThreads[i].updateParticlesPositions()
+    }
+  }
 }
