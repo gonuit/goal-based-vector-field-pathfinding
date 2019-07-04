@@ -13,12 +13,10 @@ const config: PIXI.RendererOptions = {
 };
 
 export class Game {
-  // private _isWebGL: boolean;
-  private _renderer: WebGLRenderer | typeof CanvasRenderer;
+  private _renderer: PIXI.Renderer;
   private _sceneManager: SceneManager;
   constructor(config: RendererOptions) {
-    this._renderer = PIXI.autoDetectRenderer(config);
-    // this._isWebGL = this._renderer instanceof PIXI.WebGLRenderer ? true : false;
+    this._renderer = PIXI.autoDetectRenderer(config) as any;
     document.getElementById("game").appendChild((this._renderer as any).view);
     this._sceneManager = new SceneManager(this._renderer);
     this.initScene();

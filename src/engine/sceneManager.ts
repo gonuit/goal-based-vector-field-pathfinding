@@ -11,9 +11,9 @@ export class SceneManager {
   private _scenes: Array<Scene | ParticleScene>;
   private _currentScene: Scene | ParticleScene | undefined;
   private _updater: Updater;
-  private _renderer: PIXI.WebGLRenderer | PIXI.CanvasRenderer;
+  private _renderer: PIXI.Renderer;
   constructor(
-    renderer: PIXI.WebGLRenderer | PIXI.CanvasRenderer,
+    renderer: PIXI.Renderer,
     config?: SceneManagerConfig
   ) {
     this._renderer = renderer;
@@ -50,7 +50,8 @@ export class SceneManager {
 
   private render = () => {
     this._currentScene.update();
-    (this._renderer as any).render(this._currentScene);
+    // this._renderer.render(this._currentScene);
+    this._renderer.render(this._currentScene);
   };
 
   private unmountScene = (scene: Scene | ParticleScene) => {

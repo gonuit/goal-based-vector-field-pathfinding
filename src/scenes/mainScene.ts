@@ -23,8 +23,13 @@ export class MainScene extends Scene {
       maxParticleCount: MainScene.MAX_PARTICLES_COUNT,
       withMouse: false
     });
+    this.particleScene.visible = true;
+    this.particleScene.zIndex = 1000;
+    this.stage = new Scene({ withMouse: false, name: "XD" });
+    this.addChild(this.stage);
+    this.addChild(this.particleScene);
   }
-
+  private stage: Scene;
   private particleScene: ParticleScene;
 
   private fieldSize: number;
@@ -62,7 +67,7 @@ export class MainScene extends Scene {
     // this.stats.displayFPS(true);
     this.initEvents();
 
-    this.colisionBoard = new Board(this, {
+    this.colisionBoard = new Board(this.stage, {
       horizontalBoxes: this.horizontalBoxes,
       initialRendererConfig: { color: { r: 50, a: 1, g: 200, b: 0 } },
       verticalBoxes: this.verticalBoxes,
@@ -122,7 +127,7 @@ export class MainScene extends Scene {
       ]
     }).render();
 
-    this.validBoard = new Board(this, {
+    this.validBoard = new Board(this.stage, {
       horizontalBoxes: this.horizontalBoxes,
       verticalBoxes: this.verticalBoxes,
       boxSize: this.fieldSize
@@ -134,7 +139,7 @@ export class MainScene extends Scene {
       colorByDistance: false
     };
 
-    this.particleManager = new ParticleManager(this, {
+    this.particleManager = new ParticleManager(this.particleScene, {
       amount: 500,
       inaccuracy: { min: 0.5, max: 1 },
       initialPosition: new Point(100, 100),
@@ -157,8 +162,10 @@ export class MainScene extends Scene {
     graphics.endFill();
     const sprite = PIXI.Sprite.from("../assets/image/particle.png");
     sprite.tint = 0xff000;
+    // sprite.position.x = 100
+    // sprite.position.y = 100
 
-    this.addChild(sprite);
+    this.particleScene.addChild(sprite);
   };
 
   update = () => {
@@ -182,7 +189,7 @@ export class MainScene extends Scene {
       }
     }
     // this.particleThreadsManager.updateParticlesPositions();
-    // this.particleManager.moveByPath(this.validBoard);
+    this.particleManager.moveByPath(this.validBoard);
   };
 
   unmount = () => {};
