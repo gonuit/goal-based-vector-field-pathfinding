@@ -68,7 +68,9 @@ export class ParticleThreadsManager {
   private initWebWorkers = () => {
     for (let i = 0; i < this._numberOfThreads; i++) {
       const particleThread: ParticleThread = new ParticleThread({
-        particles: this._particlesSubArrays[i]
+        particles: this._particlesSubArrays[i],
+        validBoard: this._board,
+        colisionBoard: this._colisionBoard
       });
       particleThread.init();
     }

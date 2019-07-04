@@ -122,6 +122,8 @@ export class GameScene extends Phaser.Scene {
       colisionBoard: this.colisionBoard,
       particleManager: this.particleManager,
     });
+
+    this.validBoard.toArrayBuffer()
   }
 
   update(time: number): void {

@@ -1,12 +1,13 @@
 import { Board } from "../objects/board";
-import { PTMsgType } from "../objects/ParticleThread";
-import { WorkerParticle, WorkerParticles } from "./objects/workerParticle";
+import { WorkerParticle, WorkerParticles } from "../workersObjects/workerParticle";
+import { PTMsgType } from "../workersObjects/PTMsgType";
+import { WorkerShallowBoard } from "../workersObjects/workerShallowBoard";
 
-// Worker.ts
+// // Worker.ts
 const ctx: Worker = self as any;
 
 class ParticleWorker {
-  private _board: Board;
+  private _board: WorkerShallowBoard;
   private _particles: WorkerParticles;
 
   constructor() {
@@ -19,7 +20,7 @@ class ParticleWorker {
       const y: number = array[i * 2 + 1];
       this._particles.push(new WorkerParticle(x, y));
     }
-    console.log(this._particles)
+    console.log('_particles', this._particles)
   };
 }
 
@@ -29,7 +30,6 @@ onmessage = function({ data }) {
   console.log("worker_data", data);
   const buff = new Float64Array(data.buff);
   const [type, length, ...array] = buff;
-  console.log(buff);
 
   switch (type) {
     case PTMsgType.init: {
