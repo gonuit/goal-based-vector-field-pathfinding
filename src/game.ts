@@ -1,29 +1,31 @@
-import "phaser";
+import * as PIXI from "pixi.js";
 import { GameScene } from "./scenes/gameScene";
+import { Scene } from "./engine/scene";
 
-const config: GameConfig = {
-  title: "Goal-Based Vector Field Pathfinding",
-  url: "https://github.com/digitsensitive/phaser3-typescript",
-  version: "0.8",
-  type: Phaser.CANVAS,
-  parent: "game",
-  scene: [GameScene],
-  input: {
-    keyboard: true,
-    mouse: true,
-    touch: false,
-    gamepad: false
-  },
-  backgroundColor: "#000000",
-  render: { pixelArt: false, antialias: true, powerPreference: "high-performance", batchSize: 24000 }
+const config: PIXI.RendererOptions = {
+  antialias: true,
+  powerPreference: "high-performance",
+  width: 840,
+  height: 840
 };
 
-export class Game extends Phaser.Game {
-  constructor(config: GameConfig) {
-    super(config);
+export class Game {
+  // private _isWebGL: boolean;
+  private _renderer: PIXI.WebGLRenderer | PIXI.CanvasRenderer;
+  private _scene: Scene;
+  constructor(config: PIXI.RendererOptions) {
+    this._renderer = PIXI.autoDetectRenderer(config);
+    // this._isWebGL = this._renderer instanceof PIXI.WebGLRenderer ? true : false;
+    document.getElementById("game").appendChild((this._renderer as any).view);
+    this.initScene();
   }
+
+  initScene = () => {
+    this._scene = new Scene();
+    requestAnimationFrame(this._scene.update);
+  };
 }
 
 window.addEventListener("load", () => {
-  const game = new Game({...config, width: 840, height: 840 });
+  const game = new Game(config);
 });

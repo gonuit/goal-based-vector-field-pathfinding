@@ -3,8 +3,9 @@ import { Point } from "../objects/point";
 import { ParticleManager } from "../objects/particleManager";
 import { Statistics } from "../objects/statistics";
 import { ParticleThreadsManager } from "../objects/particleThreadsManager";
+import { Scene } from "../engine/scene";
 
-export class GameScene extends Phaser.Scene {
+export class GameScene extends Scene {
   // field and game setting
   private fieldSize: number;
   private horizontalBoxes: number;
@@ -19,11 +20,6 @@ export class GameScene extends Phaser.Scene {
   private particleThreadsManager: ParticleThreadsManager;
   private particleManager: ParticleManager;
 
-  constructor() {
-    super({
-      key: "GameScene"
-    });
-  }
 
   preload(): void {
     this.load.bitmapFont(
