@@ -9,8 +9,8 @@ export class BootScene extends Phaser.Scene {
   preload(): void {
     this.load.bitmapFont(
       "mainFont",
-      "./src/boilerplate/assets/font/font.png",
-      "./src/boilerplate/assets/font/font.fnt"
+      "./src/assets/font/font.png",
+      "./src/assets/font/font.fnt"
     );
   }
 
