@@ -47,7 +47,7 @@ export class WorkerShallowBoard {
       this.shallowBoxMap[col] = new Array(this._verticalBoxes);
     }
     this.setShallowBoxMap(boxMap);
-    console.log("initialized", this);
+    console.log(`initialized thread`);
   };
 
   public setShallowBoxMap = (boxMap: Array<number> | Float64Array): void => {
@@ -79,7 +79,9 @@ export class WorkerShallowBoard {
 
   public getBoxByDimensions = (dimX: number, dimY: number): ShallowBox => {
     const { x, y } = this.getBoxPositionByDimensions(dimX, dimY);
-    return this.shallowBoxMap.length > x && this.shallowBoxMap[x].length > y
+    return this.shallowBoxMap.length > x &&
+      this.shallowBoxMap[x] instanceof Array &&
+      this.shallowBoxMap[x].length > y
       ? this.shallowBoxMap[x][y]
       : undefined;
   };

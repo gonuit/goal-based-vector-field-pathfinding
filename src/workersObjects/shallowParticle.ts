@@ -4,7 +4,7 @@ import { Inaccuracy } from "../objects/particleManager";
 import { Utils } from "../objects/utils";
 import { WorkerShallowBoard } from "./workerShallowBoard";
 
-export interface ShallowParticleConfig extends GraphicsOptions {
+export interface ShallowParticleConfig {
   initialPosition?: Point;
   size?: number;
   mass?: number;

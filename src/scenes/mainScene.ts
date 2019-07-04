@@ -10,6 +10,8 @@ import { Scene } from "../engine/scene";
 interface MainSceneConfig extends ParticleSceneConfig {}
 
 export class MainScene extends Scene {
+  private static THREADS_COUNT: number = 4;
+  private static PARTICLES_COUNT: number = 10000;
   private static MAX_PARTICLES_COUNT: number = 40000;
   constructor({ name }: MainSceneConfig) {
     super({
@@ -36,11 +38,16 @@ export class MainScene extends Scene {
   private horizontalBoxes: number;
   private verticalBoxes: number;
 
-  // private stats: Statistics;
+  private ui: Statistics;
 
   private validBoard: Board;
   private colisionBoard: Board;
   private isTrackingPaused: boolean;
+  private inertia: boolean;
+  private inertiaInitialized: boolean;
+
+  private info: PIXI.BitmapText;
+  private helpText: PIXI.BitmapText;
 
   private particleThreadsManager: ParticleThreadsManager;
   private particleManager: ParticleManager;
@@ -48,7 +55,7 @@ export class MainScene extends Scene {
   init = () => {
     this.isTrackingPaused = false;
     this.fieldSize = 40;
-    // this.stats = new Statistics(this);
+    this.ui = new Statistics(this);
     this.horizontalBoxes = 21;
     this.verticalBoxes = 21;
   };
@@ -140,12 +147,12 @@ export class MainScene extends Scene {
     };
 
     this.particleManager = new ParticleManager(this.particleScene, {
-      amount: 20000,
+      amount: MainScene.PARTICLES_COUNT,
       inaccuracy: { min: 0.5, max: 1 },
       initialPosition: new Point(100, 100),
       colisionBoard: this.colisionBoard,
       particleTexture: PIXI.Texture.from("../../assets/image/particle.png"),
-      tint: 0xff00ff,
+      tint: 0xff0000,
       alpha: 0.5
     });
 
@@ -153,12 +160,14 @@ export class MainScene extends Scene {
       board: this.validBoard,
       colisionBoard: this.colisionBoard,
       particleManager: this.particleManager,
-      numberOfThreads: 4
+      numberOfThreads: MainScene.THREADS_COUNT
     });
+
+    this.initText();
   };
 
   update = () => {
-    // this.stats.update(time);
+    this.ui;
     if (!this.isTrackingPaused) {
       const { x: mouseX, y: mouseY } = this.input.mouse.position;
       const hoverBoxPosition: Point = this.validBoard.getBoxPositionByDimensions(
@@ -176,6 +185,9 @@ export class MainScene extends Scene {
       ) {
         this.validBoard = this.validBoard.render();
       }
+    } else if (this.inertia && !this.inertiaInitialized) {
+      this.validBoard = this.validBoard.reset().render();
+      this.particleThreadsManager.updateBoardVectors();
     }
     this.particleThreadsManager.updateParticlesPositions();
     // this.particleManager.moveByPath(this.validBoard);
@@ -184,6 +196,33 @@ export class MainScene extends Scene {
   unmount = () => {};
 
   destroy = () => {};
+
+  private initText = () => {
+    this.info = new PIXI.BitmapText(
+      `Threads: ${MainScene.THREADS_COUNT + 1} Particles: ${
+        MainScene.PARTICLES_COUNT
+      }`,
+      {
+        font: { name: "font", size: 11 },
+        tint: 0x000000
+      }
+    );
+    this.helpText = new PIXI.BitmapText(
+      `Shift: turn of tracking \nSpace: pause tracking\n1,2,3,4: pathfinding debug view   `,
+      {
+        font: { name: "font", size: 8 },
+        tint: 0x000000
+      }
+    );
+    this.info.x = 40;
+    this.info.y = 25;
+    this.info.zIndex = 50;
+    this.stage.addChild(this.info);
+    this.helpText.x = 40;
+    this.helpText.y = 810;
+    this.helpText.zIndex = 50;
+    this.stage.addChild(this.helpText);
+  };
 
   private initBoardBorders = ({
     horizontalBoxes,
@@ -243,6 +282,18 @@ export class MainScene extends Scene {
       }
       case " ": {
         this.isTrackingPaused = !this.isTrackingPaused;
+        this.inertia = false;
+        return;
+      }
+      case "Shift": {
+        if (this.isTrackingPaused) {
+          this.isTrackingPaused = false;
+          this.inertia = false;
+          this.inertiaInitialized = false;
+        } else {
+          this.isTrackingPaused = true;
+          this.inertia = true;
+        }
         return;
       }
     }
