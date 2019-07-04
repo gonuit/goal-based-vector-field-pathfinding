@@ -111,7 +111,7 @@ export class GameScene extends Phaser.Scene {
     };
 
     this.particleManager = new ParticleManager(this, {
-      amount: 500,
+      amount: 2000,
       inaccuracy: { min: 0.5, max: 1 },
       initialPosition: new Point(100, 100),
       colisionBoard: this.colisionBoard
@@ -120,7 +120,8 @@ export class GameScene extends Phaser.Scene {
     this.particleThreadsManager = new ParticleThreadsManager({
       board: this.validBoard,
       colisionBoard: this.colisionBoard,
-      particleManager: this.particleManager
+      particleManager: this.particleManager,
+      numberOfThreads: 4
     });
 
     this.validBoard.toArrayBuffer();

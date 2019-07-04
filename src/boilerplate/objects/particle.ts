@@ -33,8 +33,9 @@ export class Particle extends Phaser.GameObjects.Graphics {
 
   private initElement() {
     // this.fillStyle(Color.rgbToHex(Utils.getRandomInt(100,255),Utils.getRandomInt(100,255),Utils.getRandomInt(100,255)), 0.8)
-    this.fillStyle(0xff0000, 0.8)
+    this.fillStyle(0xff0000, 1)
     this.fillCircle(0, 0, this._size)
+    // this.fillPoint(0,0, 10)
     this.setDepth(10)
     this.scene.add.existing(this)
   }

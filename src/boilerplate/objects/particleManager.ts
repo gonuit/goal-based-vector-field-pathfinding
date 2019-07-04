@@ -86,7 +86,7 @@ export class ParticleManager {
         particle.moveByVelocity();
         return;
       }
-      particle.setVelocity(boxUnderParticle.forceVector);
+      particle.setVelocity(boxUnderParticle.forceVector.copy());
     });
     this.checkColisions();
 

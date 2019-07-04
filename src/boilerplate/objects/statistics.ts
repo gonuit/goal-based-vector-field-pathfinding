@@ -38,7 +38,7 @@ export class Statistics {
 
   private updateFPSStats = (): void => {
     const truncatedFPS = Math.trunc(1000 / this._frameTimeDistance)
-    if(Math.abs(this._currentFPS - truncatedFPS) > 4 || truncatedFPS < 30) this._currentFPS = truncatedFPS
+    if(Math.abs(this._currentFPS - truncatedFPS) > 2 || truncatedFPS < 30) this._currentFPS = truncatedFPS
     if (this._currentFPS > this._maxFPS) this._maxFPS = this._currentFPS
     if (this._currentFPS < this._minFPS) this._minFPS = this._currentFPS
   }
