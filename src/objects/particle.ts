@@ -1,3 +1,4 @@
+import * as PIXI from "pixi.js";
 import { Point } from "./point"
 import { ForceVector } from "./forceVector"
 import { Utils } from "./utils";
@@ -10,7 +11,7 @@ export interface ParticleConfig extends GraphicsOptions {
 }
 
 
-export class Particle extends Phaser.GameObjects.Graphics {
+export class Particle extends PIXI.Sprite {
   private static MAX_VELOCITY: number = 10
   private static MAX_FORCE: number = 0.2
   private static MAX_SPEED: number = 2
@@ -20,7 +21,7 @@ export class Particle extends Phaser.GameObjects.Graphics {
   private _steering: ForceVector
   private _velocity: ForceVector
   constructor(scene, params: ParticleConfig = {}) {
-    super(scene, params)
+    super(PIXI.Texture.WHITE)
     const { initialPosition = new Point(0, 0), size = 5, mass = Particle.DEFAULT_MASS } = params
     this._size = size
     this._mass = mass
@@ -28,17 +29,17 @@ export class Particle extends Phaser.GameObjects.Graphics {
     this.y = initialPosition.y
     this._velocity = new ForceVector(0, 0)
     // must be last
-    this.initElement()
+    // this.initElement()
   }
 
-  private initElement() {
-    // this.fillStyle(Color.rgbToHex(Utils.getRandomInt(100,255),Utils.getRandomInt(100,255),Utils.getRandomInt(100,255)), 0.8)
-    this.fillStyle(0xff0000, 1)
-    this.fillCircle(0, 0, this._size)
-    // this.fillPoint(0,0, 10)
-    this.setDepth(10)
-    this.scene.add.existing(this)
-  }
+  // private initElement() {
+  //   // this.fillStyle(Color.rgbToHex(Utils.getRandomInt(100,255),Utils.getRandomInt(100,255),Utils.getRandomInt(100,255)), 0.8)
+  //   this.fillStyle(0xff0000, 1)
+  //   this.fillCircle(0, 0, this._size)
+  //   // this.fillPoint(0,0, 10)
+  //   this.setDepth(10)
+  //   this.scene.add.existing(this)
+  // }
 
   public setVelocity(newVelocity: ForceVector): Particle {
     this._steering = newVelocity

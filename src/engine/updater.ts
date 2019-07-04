@@ -24,7 +24,6 @@ export class Updater {
   };
 
   private update = () => {
-    console.log("update");
     this._updateFunction();
     if (this._started) requestAnimationFrame(this.update);
   };

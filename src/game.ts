@@ -1,6 +1,9 @@
 import * as PIXI from "pixi.js";
-import { GameScene } from "./scenes/gameScene";
 import { Scene } from "./engine/scene";
+import { MainScene } from "./scenes/mainScene";
+import { SceneManager } from "./engine/sceneManager";
+import { ParticleScene } from "./engine/particleScene";
+import { RendererOptions, WebGLRenderer, CanvasRenderer } from "pixi.js";
 
 const config: PIXI.RendererOptions = {
   antialias: true,
@@ -11,18 +14,21 @@ const config: PIXI.RendererOptions = {
 
 export class Game {
   // private _isWebGL: boolean;
-  private _renderer: PIXI.WebGLRenderer | PIXI.CanvasRenderer;
-  private _scene: Scene;
-  constructor(config: PIXI.RendererOptions) {
+  private _renderer: WebGLRenderer | typeof CanvasRenderer;
+  private _sceneManager: SceneManager;
+  constructor(config: RendererOptions) {
     this._renderer = PIXI.autoDetectRenderer(config);
     // this._isWebGL = this._renderer instanceof PIXI.WebGLRenderer ? true : false;
     document.getElementById("game").appendChild((this._renderer as any).view);
+    this._sceneManager = new SceneManager(this._renderer);
     this.initScene();
   }
 
   initScene = () => {
-    this._scene = new Scene();
-    requestAnimationFrame(this._scene.update);
+    const sceneName: string = "MAIN";
+    const scene: ParticleScene = new MainScene({ name: sceneName });
+    this._sceneManager.addScene(scene);
+    this._sceneManager.start(sceneName);
   };
 }
 

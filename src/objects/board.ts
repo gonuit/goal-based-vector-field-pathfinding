@@ -2,7 +2,7 @@ import { Box, BoxRenderConfig } from "./box";
 import { Color } from "./color";
 import { Utils } from "./utils";
 import { Point } from "./point";
-import { Scene } from "phaser";
+import { ParticleScene } from "../engine/particleScene";
 
 interface BoardDimensions {
   horizontalBoxes: number;
@@ -53,7 +53,7 @@ export class Board {
   private _indicateRefresh: boolean;
   private _rendererConfig: BoardRendererConfig;
   private _initialRendererConfig: BoardRendererConfig;
-  private _scene: Scene;
+  private _scene: ParticleScene;
   private _boxSize: number;
   private _boxMap: BoxMap;
   private _verticalBoxes: number;
@@ -61,7 +61,7 @@ export class Board {
   private _goalPosition: Point;
   private _boxCount: number;
   constructor(
-    scene: Scene,
+    scene: ParticleScene,
     {
       horizontalBoxes,
       verticalBoxes,
@@ -103,6 +103,7 @@ export class Board {
         }
       }
       Utils.uniquePointArray(positionsToFill).forEach(({ x, y }) => {
+        console.log('x', x, y, map)
         map[x][y] = new Box({ position: new Point(x, y), size: this._boxSize });
       });
     }
@@ -164,7 +165,7 @@ export class Board {
       } else {
         color = Color.rgbToHex(r, g, b);
       }
-      box.render(this._scene.add, {
+      box.render(this._scene, {
         color,
         renderDistances,
         renderVectorLines

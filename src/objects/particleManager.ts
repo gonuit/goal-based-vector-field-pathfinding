@@ -1,9 +1,10 @@
+import * as PIXI from "pixi.js";
 import { Particle } from "./particle";
-import { Scene } from "phaser";
 import { Point } from "./point";
 import { Board } from "./board";
 import { Box } from "./box";
 import { ForceVector } from "./forceVector";
+import { ParticleScene } from "../engine/particleScene";
 
 export interface Inaccuracy {
   min: number;
@@ -25,13 +26,12 @@ export class ParticleManager {
   private _particles: Particles;
   private _amount: number;
   private _size: number;
-  private _scene: Scene;
+  private _scene: ParticleScene;
   private _initialPosition: Point;
-  private _group: Phaser.GameObjects.Group;
   private _inaccuracy: Inaccuracy;
   private _colisionBoard: Board;
   constructor(
-    scene: Scene,
+    scene: ParticleScene,
     {
       amount,
       size = 5,
@@ -46,7 +46,6 @@ export class ParticleManager {
     this._amount = amount;
     this._size = size;
     this._initialPosition = initialPosition;
-    this._group = scene.add.group();
     if (
       inaccuracy &&
       (typeof inaccuracy.max != "number" ||
@@ -67,7 +66,6 @@ export class ParticleManager {
         size,
         fillStyle: { color: 0xff0000 }
       });
-      this._group.add(particle);
       this._particles.push(particle);
     }
   };
