@@ -25,6 +25,14 @@ export class GameScene extends Phaser.Scene {
     });
   }
 
+  preload(): void {
+    this.load.bitmapFont(
+      "mainFont",
+      "./src/assets/font/font.png",
+      "./src/assets/font/font.fnt"
+    );
+  }
+
   init(): void {
     this.isTrackingPaused = false;
     this.fieldSize = 40;
@@ -147,7 +155,7 @@ export class GameScene extends Phaser.Scene {
         this.validBoard = this.validBoard.render();
       }
     }
-    this.particleThreadsManager.updateParticlesPositions()
+    this.particleThreadsManager.updateParticlesPositions();
     // this.particleManager.moveByPath(this.validBoard);
   }
 

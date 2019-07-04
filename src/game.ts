@@ -1,5 +1,4 @@
 import "phaser";
-import { BootScene } from "./scenes/bootScene";
 import { GameScene } from "./scenes/gameScene";
 
 const config: GameConfig = {
@@ -8,7 +7,7 @@ const config: GameConfig = {
   version: "0.8",
   type: Phaser.CANVAS,
   parent: "game",
-  scene: [BootScene, GameScene],
+  scene: [GameScene],
   input: {
     keyboard: true,
     mouse: true,
