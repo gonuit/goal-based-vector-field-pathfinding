@@ -125,12 +125,12 @@ export class GameScene extends Phaser.Scene {
       colisionBoard: this.colisionBoard
     });
 
-    this.particleThreadsManager = new ParticleThreadsManager({
-      board: this.validBoard,
-      colisionBoard: this.colisionBoard,
-      particleManager: this.particleManager,
-      numberOfThreads: 4
-    });
+    // this.particleThreadsManager = new ParticleThreadsManager({
+    //   board: this.validBoard,
+    //   colisionBoard: this.colisionBoard,
+    //   particleManager: this.particleManager,
+    //   numberOfThreads: 4
+    // });
 
     this.validBoard.toArrayBuffer();
   }
@@ -147,7 +147,7 @@ export class GameScene extends Phaser.Scene {
         this.validBoard = this.validBoard
           .calculateBoxesDistance(hoverBoxPosition)
           .render();
-        this.particleThreadsManager.updateBoardVectors();
+        // this.particleThreadsManager.updateBoardVectors();
       } else if (
         this.validBoard.rendererConfig.indicateBoardRefresh &&
         this.validBoard.indicateRefresh
@@ -155,8 +155,8 @@ export class GameScene extends Phaser.Scene {
         this.validBoard = this.validBoard.render();
       }
     }
-    this.particleThreadsManager.updateParticlesPositions();
-    // this.particleManager.moveByPath(this.validBoard);
+    // this.particleThreadsManager.updateParticlesPositions();
+    this.particleManager.moveByPath(this.validBoard);
   }
 
   private initBoardBorders = ({
