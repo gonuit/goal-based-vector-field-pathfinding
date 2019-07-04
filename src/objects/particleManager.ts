@@ -68,7 +68,7 @@ export class ParticleManager {
       });
       this._particles.push(particle);
     }
-    this._scene.addChild(...this._particles)
+    this._scene.addChild(...this._particles);
   };
 
   public moveByPath(board: Board): void {
@@ -99,8 +99,9 @@ export class ParticleManager {
   private checkColisions = (): void => {
     const boxSize = this._colisionBoard.boxSize;
     this._particles.forEach(particle => {
+      const centerParticlePosition = particle.getCenterPosition();
       const boxPosition = this._colisionBoard.getBoxPositionByDimensions(
-        new Point(particle.x, particle.y)
+        new Point(centerParticlePosition.x, centerParticlePosition.y)
       );
       const {
         right,
@@ -110,11 +111,11 @@ export class ParticleManager {
       } = this._colisionBoard.getNamedChildrens(boxPosition);
       if (
         bottom &&
-        particle.y + this._size >= bottom.rectanglePosition.y - boxSize / 2
+        particle.y + this._size >= bottom.boxCenterPosition.y - boxSize * 0.65
       ) {
         particle.y =
-          bottom.rectanglePosition.y -
-          boxSize / 2 -
+          bottom.boxCenterPosition.y -
+          boxSize * 0.65 -
           this._size -
           ParticleManager.PARTICLE_DISTANCE_AFTER_COLISION;
         particle.velocity = new ForceVector(
@@ -124,11 +125,11 @@ export class ParticleManager {
         );
       } else if (
         top &&
-        particle.y - this._size <= top.rectanglePosition.y + boxSize / 2
+        particle.y - this._size <= top.boxCenterPosition.y + boxSize * 0.45
       ) {
         particle.y =
-          top.rectanglePosition.y +
-          boxSize / 2 +
+          top.boxCenterPosition.y +
+          boxSize * 0.45 +
           this._size +
           ParticleManager.PARTICLE_DISTANCE_AFTER_COLISION;
         particle.velocity = new ForceVector(
@@ -138,11 +139,11 @@ export class ParticleManager {
         );
       } else if (
         left &&
-        particle.x - this._size <= left.rectanglePosition.x + boxSize / 2
+        particle.x - this._size <= left.boxCenterPosition.x + boxSize * 0.45
       ) {
         particle.x =
-          left.rectanglePosition.x +
-          boxSize / 2 +
+          left.boxCenterPosition.x +
+          boxSize * 0.45 +
           this._size +
           ParticleManager.PARTICLE_DISTANCE_AFTER_COLISION;
         particle.velocity = new ForceVector(
@@ -152,11 +153,11 @@ export class ParticleManager {
         );
       } else if (
         right &&
-        particle.x + this._size >= right.rectanglePosition.x - boxSize / 2
+        particle.x + this._size >= right.boxCenterPosition.x - boxSize * 0.65
       ) {
         particle.x =
-          right.rectanglePosition.x -
-          boxSize / 2 -
+          right.boxCenterPosition.x -
+          boxSize * 0.65 -
           this._size -
           ParticleManager.PARTICLE_DISTANCE_AFTER_COLISION;
         particle.velocity = new ForceVector(
@@ -173,6 +174,6 @@ export class ParticleManager {
   };
 
   get particles(): Particles {
-    return this._particles
+    return this._particles;
   }
 }

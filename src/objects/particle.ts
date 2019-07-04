@@ -31,7 +31,6 @@ export class Particle extends PIXI.Sprite {
     this._scene = scene;
     this._size = size;
     this._mass = mass;
-    console.log('initialPosition', initialPosition)
     this.position.x = initialPosition.x;
     this.position.y = initialPosition.y;
     this._velocity = new ForceVector(0, 0);
@@ -40,9 +39,9 @@ export class Particle extends PIXI.Sprite {
   }
 
   private initElement() {
-    // this.texture = PIXI.Texture.from("../../assets/image/particle.png");
-    this.tint = 0x00ffff
-    this.zIndex = 100
+    this.texture = PIXI.Texture.from("../../assets/image/particle.png");
+    this.tint = 0x00ffff;
+    this.zIndex = 100;
   }
 
   public setVelocity(newVelocity: ForceVector): Particle {
@@ -90,4 +89,7 @@ export class Particle extends PIXI.Sprite {
     x: this.x,
     y: this.y
   });
+
+  public getCenterPosition = (): Point =>
+    new Point(this.x + this._size * 0.5, this.y + this._size * 0.5);
 }

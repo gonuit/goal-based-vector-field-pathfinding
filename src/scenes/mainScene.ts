@@ -140,32 +140,20 @@ export class MainScene extends Scene {
     };
 
     this.particleManager = new ParticleManager(this.particleScene, {
-      amount: 500,
+      amount: 10000,
       inaccuracy: { min: 0.5, max: 1 },
       initialPosition: new Point(100, 100),
       colisionBoard: this.colisionBoard
     });
 
-    // this.particleThreadsManager = new ParticleThreadsManager({
-    //   board: this.validBoard,
-    //   colisionBoard: this.colisionBoard,
-    //   particleManager: this.particleManager,
-    //   numberOfThreads: 4
-    // });
+    this.particleThreadsManager = new ParticleThreadsManager({
+      board: this.validBoard,
+      colisionBoard: this.colisionBoard,
+      particleManager: this.particleManager,
+      numberOfThreads: 1
+    });
 
-    this.validBoard.toArrayBuffer();
 
-    console.log("create");
-    const graphics = new PIXI.Graphics();
-    graphics.beginFill(0xff3300);
-    graphics.drawRect(50, 250, 100, 100);
-    graphics.endFill();
-    const sprite = PIXI.Sprite.from("../assets/image/particle.png");
-    sprite.tint = 0xff000;
-    // sprite.position.x = 100
-    // sprite.position.y = 100
-
-    this.particleScene.addChild(sprite);
   };
 
   update = () => {
@@ -180,7 +168,7 @@ export class MainScene extends Scene {
         this.validBoard = this.validBoard
           .calculateBoxesDistance(hoverBoxPosition)
           .render();
-        // this.particleThreadsManager.updateBoardVectors();
+        this.particleThreadsManager.updateBoardVectors();
       } else if (
         this.validBoard.rendererConfig.indicateBoardRefresh &&
         this.validBoard.indicateRefresh
@@ -188,8 +176,8 @@ export class MainScene extends Scene {
         this.validBoard = this.validBoard.render();
       }
     }
-    // this.particleThreadsManager.updateParticlesPositions();
-    this.particleManager.moveByPath(this.validBoard);
+    this.particleThreadsManager.updateParticlesPositions();
+    // this.particleManager.moveByPath(this.validBoard);
   };
 
   unmount = () => {};

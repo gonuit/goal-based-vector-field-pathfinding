@@ -3,7 +3,16 @@ import { ForceVector } from "../objects/forceVector";
 export interface ShallowBox {
   positionX: number;
   positionY: number;
-  forceVector: ForceVector
+  centerPositionY: number;
+  centerPositionX: number;
+  forceVector: ForceVector;
+}
+
+export interface ShallowNamedChildrens {
+  bottom?: ShallowBox;
+  top?: ShallowBox;
+  left?: ShallowBox;
+  right?: ShallowBox;
 }
 
 export class WorkerShallowBoard {
@@ -34,11 +43,11 @@ export class WorkerShallowBoard {
       this.shallowBoxMap[col] = new Array(this._verticalBoxes);
     }
     this.setShallowBoxMap(boxMap);
-    console.log('initialized', this)
+    console.log("initialized", this);
   };
 
   public setShallowBoxMap = (boxMap: Array<number> | Float64Array): void => {
-    for (let i = 0; i < boxMap.length / 4; i++) {
+    for (let i = 0; i < this._boxCount; i++) {
       const firstItem = i * 4;
       const positionX = boxMap[firstItem];
       const positionY = boxMap[firstItem + 1];
@@ -47,22 +56,55 @@ export class WorkerShallowBoard {
       this.shallowBoxMap[positionX][positionY] = {
         positionX,
         positionY,
+        centerPositionX: positionX * this.boxSize + this.boxSize * 0.5,
+        centerPositionY: positionY * this.boxSize + this.boxSize * 0.5,
         forceVector: new ForceVector(forceX, forceY)
       };
     }
   };
 
-  public getBoxPositionByDimensions = (x: number, y: number): { x: number, y: number } => {
-    return ({
+  public getBoxPositionByDimensions = (
+    x: number,
+    y: number
+  ): { x: number; y: number } => {
+    return {
       x: x === 0 ? 0 : Math.trunc(x / this._boxSize),
       y: y === 0 ? 0 : Math.trunc(y / this._boxSize)
-    });
+    };
   };
 
   public getBoxByDimensions = (dimX: number, dimY: number): ShallowBox => {
-    const { x, y } = this.getBoxPositionByDimensions(dimX,dimY);
+    const { x, y } = this.getBoxPositionByDimensions(dimX, dimY);
     return this.shallowBoxMap.length > x && this.shallowBoxMap[x].length > y
       ? this.shallowBoxMap[x][y]
       : undefined;
+  };
+
+  public exist = (x: number, y: number): boolean =>
+    Boolean(
+      x >= 0 &&
+        y >= 0 &&
+        this.shallowBoxMap.length > x &&
+        this.shallowBoxMap[x].length > y &&
+        this.shallowBoxMap[x][y]
+    );
+
+  public get boxSize(): number {
+    return this._boxSize;
+  }
+
+  public getBoxByPosition = (x: number, y: number) =>
+    this.exist(x, y) ? this.shallowBoxMap[x][y] : undefined;
+
+  public getShallowNamedChildrens = (
+    x: number,
+    y: number
+  ): ShallowNamedChildrens => {
+    const shallowNamedChildrens: ShallowNamedChildrens = {};
+    shallowNamedChildrens.left = this.getBoxByPosition(x - 1, y);
+    shallowNamedChildrens.right = this.getBoxByPosition(x + 1, y);
+    shallowNamedChildrens.top = this.getBoxByPosition(x, y - 1);
+    shallowNamedChildrens.bottom = this.getBoxByPosition(x, y + 1);
+    return shallowNamedChildrens;
   };
 }

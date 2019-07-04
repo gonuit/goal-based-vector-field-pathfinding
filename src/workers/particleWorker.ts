@@ -61,10 +61,10 @@ class ParticleWorker {
   };
 
   public updateParticlesPositions = (): ArrayBuffer => {
+    if (!this._board) return undefined;
     for (let i = 0; i < this._particles.length; i++) {
       const particle: ShallowParticle = this._particles[i];
       const { x, y } = particle;
-
       const boxUnderParticle: ShallowBox = this._board.getBoxByDimensions(x, y);
       if (!boxUnderParticle) {
         // console.warn(
@@ -74,8 +74,10 @@ class ParticleWorker {
         // );
         particle.moveByVelocity();
       } else {
-        particle.setVelocity(boxUnderParticle.forceVector);
-        particle.moveWithInaccuracyByVelocity({ min: 0.5, max: 1 });
+        particle
+          .setVelocity(boxUnderParticle.forceVector)
+          .checkColisions(this._colisionBoard)
+          .moveWithInaccuracyByVelocity({ min: 0.5, max: 1 });
         // particle.moveByVelocity();
       }
     }
@@ -110,11 +112,12 @@ onmessage = function({ data }) {
       ctx.postMessage({ buff: vectorsDoneBuffer }, [vectorsDoneBuffer]);
     }
     case PTMsgType.updatePositions: {
-    const newParticlePositionsBuffer: ArrayBuffer = particleWorker.updateParticlesPositions();
-    if (newParticlePositionsBuffer)
+      const newParticlePositionsBuffer: ArrayBuffer = particleWorker.updateParticlesPositions();
+      if (newParticlePositionsBuffer)
         ctx.postMessage({ buff: newParticlePositionsBuffer }, [
           newParticlePositionsBuffer
         ]);
+      else return;
     }
     default: {
     }

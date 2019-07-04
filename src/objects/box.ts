@@ -34,7 +34,6 @@ export class Box {
   private _forceVector: ForceVector;
   private _size: number;
   private _boxCenterPosition: Point;
-  private _boxTopLeftPosition: Point;
   constructor({
     distance = 0,
     position,
@@ -50,10 +49,6 @@ export class Box {
     this._boxCenterPosition = new Point(
       this.position.x * this._size + this._size * 0.5,
       this.position.y * this._size + this._size * 0.5
-    );
-    this._boxTopLeftPosition = new Point(
-      this.position.x * this._size,
-      this.position.y * this._size
     );
   }
 
@@ -86,6 +81,11 @@ export class Box {
   public get rectanglePosition(): Point {
     if (!this._rectangleObject) return undefined;
     return new Point(this._rectangleObject.x, this._rectangleObject.y);
+  }
+
+  public get boxCenterPosition(): Point {
+    if (!this._boxCenterPosition) return undefined;
+    return new Point(this._boxCenterPosition.x, this._boxCenterPosition.y);
   }
 
   public reset() {
