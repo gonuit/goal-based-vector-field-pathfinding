@@ -1,10 +1,16 @@
+import Stats = require("stats.js");
+
 export class Updater {
+  private _stats: Stats;
   constructor() {}
   private _updateFunction: () => void;
   private _started: boolean;
   public set(updateFunction: () => void): void {
     this._updateFunction = updateFunction;
     this._started = true;
+    this._stats = new Stats();
+    this._stats.showPanel(0);
+    document.body.appendChild(this._stats.dom);
     requestAnimationFrame(this.update);
   }
 
@@ -24,7 +30,9 @@ export class Updater {
   };
 
   private update = () => {
+    this._stats.begin();
     this._updateFunction();
+    this._stats.end();
     if (this._started) requestAnimationFrame(this.update);
   };
 }

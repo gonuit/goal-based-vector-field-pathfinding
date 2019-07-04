@@ -17,7 +17,7 @@ export interface ParticleSceneConfig extends ListenersConfig {
   };
 }
 
-export abstract class ParticleScene extends PIXI.ParticleContainer {
+export class ParticleScene extends PIXI.ParticleContainer {
   private _name: string;
 
   constructor({
@@ -39,17 +39,17 @@ export abstract class ParticleScene extends PIXI.ParticleContainer {
     mouse: { position: new Point(0, 0) }
   };
 
-  abstract preload();
+  public preload = () => {};
 
-  abstract init();
+  public init = () => {};
 
-  abstract create();
+  public create = () => {};
 
-  abstract update();
+  public update = () => {};
 
-  abstract unmount();
+  public unmount = () => {};
 
-  abstract destroy();
+  public destroy = () => {};
 
   private _handleMousePosition = ({ x, y, target }: MouseEvent) => {
     const { left, top } = (target as Element).getBoundingClientRect();

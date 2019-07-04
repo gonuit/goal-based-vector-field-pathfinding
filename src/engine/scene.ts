@@ -2,14 +2,14 @@ import * as PIXI from "pixi.js";
 import { Point } from "../objects/point";
 
 interface ListenersConfig {
-  withMouse: boolean;
+  withMouse?: boolean;
 }
 
 export interface SceneConfig extends ListenersConfig {
   name: string;
 }
 
-export abstract class Scene extends PIXI.Container {
+export class Scene extends PIXI.Container {
   private _name: string;
 
   constructor({ name, withMouse = false }: SceneConfig) {
@@ -26,22 +26,22 @@ export abstract class Scene extends PIXI.Container {
     mouse: { position: new Point(0, 0) }
   };
 
-  abstract preload();
+  public preload = async () => {};
 
-  abstract init();
+  public init = () => {};
 
-  abstract create();
+  public create = () => {};
 
-  abstract update();
+  public update = () => {};
 
-  abstract unmount();
+  public unmount = () => {};
 
-  abstract destroy();
+  public destroy = () => {};
 
-  private _handleMousePosition = ({ x, y }: MouseEvent) => {
-    console.log("position", x);
-    this.input.mouse.position.x = x;
-    this.input.mouse.position.y = y;
+  private _handleMousePosition = ({ x, y, target }: MouseEvent) => {
+    const { left, top } = (target as Element).getBoundingClientRect();
+    this.input.mouse.position.x = x - left;
+    this.input.mouse.position.y = y - top;
   };
 
   private _addListeners = ({ withMouse }: ListenersConfig) => {

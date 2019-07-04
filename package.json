@@ -12,6 +12,7 @@
   ],
   "devDependencies": {
     "@types/pixi.js": "^4.8.8",
+    "@types/stats.js": "^0.17.0",
     "expose-loader": "0.7.5",
     "ts-loader": "6.0.0",
     "typescript": "^3.5.2",
@@ -21,7 +22,8 @@
   },
   "dependencies": {
     "phaser": "3.16.2",
-    "pixi.js": "^5.0.4"
+    "pixi.js": "^5.0.4",
+    "stats.js": "^0.17.0"
   },
   "scripts": {
     "dev": "webpack --mode development && webpack-dev-server --mode development",

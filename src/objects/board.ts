@@ -2,7 +2,7 @@ import { Box, BoxRenderConfig } from "./box";
 import { Color } from "./color";
 import { Utils } from "./utils";
 import { Point } from "./point";
-import { ParticleScene } from "../engine/particleScene";
+import { Scene } from "../engine/scene";
 
 interface BoardDimensions {
   horizontalBoxes: number;
@@ -53,7 +53,7 @@ export class Board {
   private _indicateRefresh: boolean;
   private _rendererConfig: BoardRendererConfig;
   private _initialRendererConfig: BoardRendererConfig;
-  private _scene: ParticleScene;
+  private _scene: Scene;
   private _boxSize: number;
   private _boxMap: BoxMap;
   private _verticalBoxes: number;
@@ -61,7 +61,7 @@ export class Board {
   private _goalPosition: Point;
   private _boxCount: number;
   constructor(
-    scene: ParticleScene,
+    scene: Scene,
     {
       horizontalBoxes,
       verticalBoxes,
@@ -103,12 +103,10 @@ export class Board {
         }
       }
       Utils.uniquePointArray(positionsToFill).forEach(({ x, y }) => {
-        console.log('x', x, y, map)
         map[x][y] = new Box({ position: new Point(x, y), size: this._boxSize });
       });
     }
     this._boxCount = map.flat().filter((box: Box) => box !== undefined).length;
-    // console.log("mpa", map)
     this._boxMap = map;
   };
 
@@ -367,16 +365,16 @@ export class Board {
   };
 
   public toArrayBuffer = (): ArrayBuffer => {
-    const offset: number = 4
-    const array: Array<any> = new Array((this._boxCount * 4) + offset);
-    array[0] = this._horizontalBoxes
-    array[1] = this._verticalBoxes
-    array[2] = this._boxSize
-    array[3] = this._boxCount
+    const offset: number = 4;
+    const array: Array<any> = new Array(this._boxCount * 4 + offset);
+    array[0] = this._horizontalBoxes;
+    array[1] = this._verticalBoxes;
+    array[2] = this._boxSize;
+    array[3] = this._boxCount;
     let i: number = 0;
     this.forEachBox(
       ({ position: { x, y }, forceVector: { x: forceX, y: forceY } }: Box) => {
-        const firstItem: number = (i * 4) + offset;
+        const firstItem: number = i * 4 + offset;
         array[firstItem] = x;
         array[firstItem + 1] = y;
         array[firstItem + 2] = forceX;

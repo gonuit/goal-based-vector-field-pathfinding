@@ -2,12 +2,12 @@ import * as PIXI from "pixi.js";
 import { Scene } from "./engine/scene";
 import { MainScene } from "./scenes/mainScene";
 import { SceneManager } from "./engine/sceneManager";
-import { ParticleScene } from "./engine/particleScene";
 import { RendererOptions, WebGLRenderer, CanvasRenderer } from "pixi.js";
 
 const config: PIXI.RendererOptions = {
   antialias: true,
   powerPreference: "high-performance",
+  transparent: true,
   width: 840,
   height: 840
 };
@@ -26,7 +26,7 @@ export class Game {
 
   initScene = () => {
     const sceneName: string = "MAIN";
-    const scene: ParticleScene = new MainScene({ name: sceneName });
+    const scene: Scene = new MainScene({ name: sceneName });
     this._sceneManager.addScene(scene);
     this._sceneManager.start(sceneName);
   };

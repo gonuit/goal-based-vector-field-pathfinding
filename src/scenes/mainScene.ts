@@ -5,20 +5,33 @@ import { Board } from "../objects/board";
 import { Statistics } from "../objects/statistics";
 import { ParticleThreadsManager } from "../objects/particleThreadsManager";
 import { ParticleManager } from "../objects/particleManager";
+import { Scene } from "../engine/scene";
 
 interface MainSceneConfig extends ParticleSceneConfig {}
 
-export class MainScene extends ParticleScene {
+export class MainScene extends Scene {
   private static MAX_PARTICLES_COUNT: number = 20000;
   constructor({ name }: MainSceneConfig) {
-    super({ name, maxParticleCount: MainScene.MAX_PARTICLES_COUNT, withMouse: true });
+    super({
+      name,
+
+      withMouse: true
+    });
+    // TODO: Fix this thing
+    this.particleScene = new ParticleScene({
+      name: "SUB_MAIN",
+      maxParticleCount: MainScene.MAX_PARTICLES_COUNT,
+      withMouse: false
+    });
   }
+
+  private particleScene: ParticleScene;
 
   private fieldSize: number;
   private horizontalBoxes: number;
   private verticalBoxes: number;
 
-  private stats: Statistics;
+  // private stats: Statistics;
 
   private validBoard: Board;
   private colisionBoard: Board;
@@ -35,11 +48,18 @@ export class MainScene extends ParticleScene {
     this.verticalBoxes = 21;
   };
 
-  preload = () => {};
+  preload = async () => {
+    let options = { crossOrigin: true };
+    const loader = new PIXI.Loader();
+    loader.add("font", "src/assets/font/font.fnt", options);
+    await new Promise((res, rej) => {
+      loader.onComplete.add(res);
+      loader.load();
+    });
+  };
 
   create = () => {
     // this.stats.displayFPS(true);
-
     this.initEvents();
 
     this.colisionBoard = new Board(this, {
@@ -136,6 +156,7 @@ export class MainScene extends ParticleScene {
     graphics.drawRect(50, 250, 100, 100);
     graphics.endFill();
     const sprite = PIXI.Sprite.from("../assets/image/particle.png");
+    sprite.tint = 0xff000;
 
     this.addChild(sprite);
   };
@@ -143,7 +164,7 @@ export class MainScene extends ParticleScene {
   update = () => {
     // this.stats.update(time);
     if (!this.isTrackingPaused) {
-      const { x: mouseX, y: mouseY } = this.input.mouse.position
+      const { x: mouseX, y: mouseY } = this.input.mouse.position;
       const hoverBoxPosition: Point = this.validBoard.getBoxPositionByDimensions(
         new Point(mouseX, mouseY)
       );
@@ -161,7 +182,7 @@ export class MainScene extends ParticleScene {
       }
     }
     // this.particleThreadsManager.updateParticlesPositions();
-    this.particleManager.moveByPath(this.validBoard);
+    // this.particleManager.moveByPath(this.validBoard);
   };
 
   unmount = () => {};
@@ -230,6 +251,4 @@ export class MainScene extends ParticleScene {
       }
     }
   };
-
-  
 }

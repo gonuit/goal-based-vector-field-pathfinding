@@ -41,8 +41,8 @@ export class SceneManager {
     this._currentScene = targetScene;
   };
 
-  private initScene = (scene: Scene | ParticleScene) => {
-    scene.preload();
+  private initScene = async (scene: Scene | ParticleScene) => {
+    await scene.preload();
     scene.init();
     scene.create();
     this._updater.set(this.render);

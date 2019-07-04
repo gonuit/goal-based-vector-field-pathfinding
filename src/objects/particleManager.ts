@@ -4,7 +4,7 @@ import { Point } from "./point";
 import { Board } from "./board";
 import { Box } from "./box";
 import { ForceVector } from "./forceVector";
-import { ParticleScene } from "../engine/particleScene";
+import { Scene } from "../engine/scene";
 
 export interface Inaccuracy {
   min: number;
@@ -26,12 +26,12 @@ export class ParticleManager {
   private _particles: Particles;
   private _amount: number;
   private _size: number;
-  private _scene: ParticleScene;
+  private _scene: Scene;
   private _initialPosition: Point;
   private _inaccuracy: Inaccuracy;
   private _colisionBoard: Board;
   constructor(
-    scene: ParticleScene,
+    scene: Scene,
     {
       amount,
       size = 5,
