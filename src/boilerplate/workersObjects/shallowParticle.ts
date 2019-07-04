@@ -35,13 +35,12 @@ export class ShallowParticle {
 
   public setVelocity(newVelocity: ForceVector): ShallowParticle {
     this._steering = newVelocity
+      .copy()
       .truncate(ShallowParticle.MAX_VELOCITY)
       .add(this._velocity)
       .truncate(ShallowParticle.MAX_FORCE)
       .devide(this._mass);
-    this._velocity = this._velocity
-      .add(this._steering)
-      .truncate(ShallowParticle.MAX_SPEED);
+    this._velocity.add(this._steering).truncate(ShallowParticle.MAX_SPEED);
 
     return this;
   }

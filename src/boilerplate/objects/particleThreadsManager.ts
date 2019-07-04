@@ -22,7 +22,7 @@ export interface ParticleThreadsManagerConfig {
 }
 
 export class ParticleThreadsManager {
-  private static BASIC_THREAD_COUNT: number = 1;
+  private static BASIC_THREAD_COUNT: number = 2;
   private _board: Board;
   private _colisionBoard: Board;
   private _particleManager: ParticleManager;

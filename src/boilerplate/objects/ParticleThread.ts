@@ -26,7 +26,6 @@ export class ParticleThread {
     const validBoardBuffer: ArrayBuffer = this._validBoard.toArrayBuffer();
     const colisionBoardBuffer: ArrayBuffer = this._colisionBoard.toArrayBuffer();
     const particlesArrayBuffer: ArrayBuffer = this.particlesToArrayBuffer();
-    console.time("1");
     this._worker.postMessage(
       { buff: particlesArrayBuffer, validBoardBuffer, colisionBoardBuffer },
       [particlesArrayBuffer, validBoardBuffer, colisionBoardBuffer]
@@ -44,16 +43,13 @@ export class ParticleThread {
         return;
       }
       case PTMsgType.setVectorsDone: {
-        console.log("vectors set");
         return;
       }
       case PTMsgType.updatedPositions: {
-        console.log("updated positions ");
         this.updateParticleGameObjectsPositons(rest);
         return;
       }
       default: {
-        console.timeEnd("1");
         console.log("worker_message_data", new Float64Array(data.buff));
         return;
       }
@@ -75,7 +71,6 @@ export class ParticleThread {
 
   public updateBoardVectors = () => {
     const validBoardBuffer: ArrayBuffer = this._validBoard.toArrayBuffer();
-    console.time("1");
     const type = new Float64Array([PTMsgType.setVectors]).buffer;
     this._worker.postMessage({ buff: type, validBoardBuffer }, [
       validBoardBuffer,
