@@ -55,12 +55,14 @@ export class ParticleThreadsManager {
       particles.length / this._numberOfThreads
     );
     for (let i = 0; i < this._numberOfThreads; i++) {
+      console.log('aaaaaa', i + 1 === this._numberOfThreads)
       const particlesSubArray: Particles = particles.slice(
         i * particlesPerThread,
         i + 1 === this._numberOfThreads
           ? particles.length
           : i * particlesPerThread + particlesPerThread
       );
+      console.log('particlesSubArray', particlesSubArray)
       this._particlesSubArrays.push(particlesSubArray);
     }
   };

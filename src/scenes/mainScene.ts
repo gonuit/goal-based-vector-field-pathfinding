@@ -140,7 +140,7 @@ export class MainScene extends Scene {
     };
 
     this.particleManager = new ParticleManager(this.particleScene, {
-      amount: 10000,
+      amount: 6,
       inaccuracy: { min: 0.5, max: 1 },
       initialPosition: new Point(100, 100),
       colisionBoard: this.colisionBoard
@@ -150,7 +150,7 @@ export class MainScene extends Scene {
       board: this.validBoard,
       colisionBoard: this.colisionBoard,
       particleManager: this.particleManager,
-      numberOfThreads: 1
+      numberOfThreads: 2
     });
 
 

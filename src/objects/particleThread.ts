@@ -59,8 +59,9 @@ export class ParticleThread {
   private updateParticleGameObjectsPositons = (
     serializedParticles: Array<number>
   ) => {
+    const length: number = serializedParticles[0];
     const offset = 1;
-    for (let i = 0; i < serializedParticles.length / 4; i++) {
+    for (let i = 0; i < length; i++) {
       const firstElement = i * 2 + offset;
       const x: number = serializedParticles[firstElement];
       const y: number = serializedParticles[firstElement + 1];
