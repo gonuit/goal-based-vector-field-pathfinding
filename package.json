@@ -18,6 +18,7 @@
     "Phaser3-example"
   ],
   "devDependencies": {
+    "@types/pixi.js": "^4.8.8",
     "expose-loader": "0.7.5",
     "ts-loader": "6.0.0",
     "typescript": "3.4.5",
@@ -26,7 +27,8 @@
     "webpack-dev-server": "3.3.1"
   },
   "dependencies": {
-    "phaser": "3.16.2"
+    "phaser": "3.16.2",
+    "pixi.js": "^5.0.4"
   },
   "scripts": {
     "dev": "webpack --mode development && webpack-dev-server --mode development",
