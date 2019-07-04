@@ -95,12 +95,21 @@ export class ShallowParticle {
       centerParticlePosition.x,
       centerParticlePosition.y
     );
-    const { right, left, bottom, top } = colisionBoard.getShallowNamedChildrens(
-      boxPosition.x,
-      boxPosition.y
-    );
+    const {
+      right,
+      left,
+      bottom,
+      top,
+      topRight,
+      topLeft,
+      bottomLeft,
+      bottomRight
+    } = colisionBoard.getShallowNamedChildrens(boxPosition.x, boxPosition.y);
 
-    if (bottom && this.y + this._size >= bottom.centerPositionY - boxSize * 0.65) {
+    if (
+      bottom &&
+      this.y + this._size >= bottom.centerPositionY - boxSize * 0.65
+    ) {
       this.y =
         bottom.centerPositionY -
         boxSize * 0.65 -
@@ -110,7 +119,10 @@ export class ShallowParticle {
         this.velocity.x,
         -this.velocity.y * ShallowParticle.FORCE_PERCENTAGE_AFTER_COLLISION
       );
-    } else if (top && this.y - this._size <= top.centerPositionY + boxSize * 0.45) {
+    } else if (
+      top &&
+      this.y - this._size <= top.centerPositionY + boxSize * 0.45
+    ) {
       this.y =
         top.centerPositionY +
         boxSize * 0.45 +
@@ -120,7 +132,10 @@ export class ShallowParticle {
         this.velocity.x,
         -this.velocity.y * ShallowParticle.FORCE_PERCENTAGE_AFTER_COLLISION
       );
-    } else if (left && this.x - this._size <= left.centerPositionX + boxSize * 0.45) {
+    } else if (
+      left &&
+      this.x - this._size <= left.centerPositionX + boxSize * 0.45
+    ) {
       this.x =
         left.centerPositionX +
         boxSize * 0.45 +
@@ -142,6 +157,82 @@ export class ShallowParticle {
       this.velocity = new ForceVector(
         -this.velocity.x * ShallowParticle.FORCE_PERCENTAGE_AFTER_COLLISION,
         this.velocity.y
+      );
+    } else if (
+      topRight &&
+      this.x + this._size >= topRight.centerPositionX - boxSize * 0.65 &&
+      this.y - this._size <= topRight.centerPositionY + boxSize * 0.45
+    ) {
+      this.x =
+        topRight.centerPositionX -
+        boxSize * 0.65 -
+        this._size -
+        ShallowParticle.PARTICLE_DISTANCE_AFTER_COLISION;
+      this.y =
+        topRight.centerPositionY +
+        boxSize * 0.45 +
+        this._size +
+        ShallowParticle.PARTICLE_DISTANCE_AFTER_COLISION;
+      this.velocity = new ForceVector(
+        -this.velocity.x * ShallowParticle.FORCE_PERCENTAGE_AFTER_COLLISION,
+        -this.velocity.y * ShallowParticle.FORCE_PERCENTAGE_AFTER_COLLISION
+      );
+    } else if (
+      topLeft &&
+      this.x - this._size <= topLeft.centerPositionX + boxSize * 0.45 &&
+      this.y - this._size <= topLeft.centerPositionY + boxSize * 0.45
+    ) {
+      this.x =
+        topLeft.centerPositionX +
+        boxSize * 0.45 +
+        this._size +
+        ShallowParticle.PARTICLE_DISTANCE_AFTER_COLISION;
+      this.y =
+        topLeft.centerPositionY +
+        boxSize * 0.45 +
+        this._size +
+        ShallowParticle.PARTICLE_DISTANCE_AFTER_COLISION;
+      this.velocity = new ForceVector(
+        -this.velocity.x * ShallowParticle.FORCE_PERCENTAGE_AFTER_COLLISION,
+        -this.velocity.y * ShallowParticle.FORCE_PERCENTAGE_AFTER_COLLISION
+      );
+    } else if (
+      bottomLeft &&
+      this.x - this._size <= bottomLeft.centerPositionX + boxSize * 0.45 &&
+      this.y + this._size >= bottomLeft.centerPositionY - boxSize * 0.65
+    ) {
+      this.x =
+        bottomLeft.centerPositionX +
+        boxSize * 0.45 +
+        this._size +
+        ShallowParticle.PARTICLE_DISTANCE_AFTER_COLISION;
+      this.y =
+        bottomLeft.centerPositionY -
+        boxSize * 0.65 -
+        this._size -
+        ShallowParticle.PARTICLE_DISTANCE_AFTER_COLISION;
+      this.velocity = new ForceVector(
+        -this.velocity.x * ShallowParticle.FORCE_PERCENTAGE_AFTER_COLLISION,
+        -this.velocity.y * ShallowParticle.FORCE_PERCENTAGE_AFTER_COLLISION
+      );
+    } else if (
+      bottomRight &&
+      this.x + this._size >= bottomRight.centerPositionX - boxSize * 0.65 &&
+      this.y + this._size >= bottomRight.centerPositionY - boxSize * 0.65
+    ) {
+      this.x =
+        bottomRight.centerPositionX -
+        boxSize * 0.65 -
+        this._size -
+        ShallowParticle.PARTICLE_DISTANCE_AFTER_COLISION;
+      this.y =
+        bottomRight.centerPositionY -
+        boxSize * 0.65 -
+        this._size -
+        ShallowParticle.PARTICLE_DISTANCE_AFTER_COLISION;
+      this.velocity = new ForceVector(
+        -this.velocity.x * ShallowParticle.FORCE_PERCENTAGE_AFTER_COLLISION,
+        -this.velocity.y * ShallowParticle.FORCE_PERCENTAGE_AFTER_COLLISION
       );
     }
     return this;

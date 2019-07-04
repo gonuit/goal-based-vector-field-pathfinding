@@ -10,7 +10,11 @@ export interface ShallowBox {
 
 export interface ShallowNamedChildrens {
   bottom?: ShallowBox;
+  bottomLeft?: ShallowBox;
+  bottomRight?: ShallowBox;
   top?: ShallowBox;
+  topLeft?: ShallowBox;
+  topRight?: ShallowBox;
   left?: ShallowBox;
   right?: ShallowBox;
 }
@@ -105,6 +109,10 @@ export class WorkerShallowBoard {
     shallowNamedChildrens.right = this.getBoxByPosition(x + 1, y);
     shallowNamedChildrens.top = this.getBoxByPosition(x, y - 1);
     shallowNamedChildrens.bottom = this.getBoxByPosition(x, y + 1);
+    shallowNamedChildrens.topLeft = this.getBoxByPosition(x - 1, y - 1);
+    shallowNamedChildrens.topRight = this.getBoxByPosition(x + 1, y - 1);
+    shallowNamedChildrens.bottomRight = this.getBoxByPosition(x + 1, y + 1);
+    shallowNamedChildrens.bottomLeft = this.getBoxByPosition(x - 1, y + 1);
     return shallowNamedChildrens;
   };
 }
