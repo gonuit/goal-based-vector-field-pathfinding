@@ -11,11 +11,14 @@ export interface Inaccuracy {
   max: number;
 }
 interface ParticleManagerConfig {
+  tint?: number;
+  alpha?: number;
   amount: number;
   initialPosition?: Point;
   size?: number;
   inaccuracy?: Inaccuracy;
   colisionBoard?: Board;
+  particleTexture?: PIXI.Texture;
 }
 
 export type Particles = Array<Particle>;
@@ -23,13 +26,18 @@ export type Particles = Array<Particle>;
 export class ParticleManager {
   private static FORCE_PERCENTAGE_AFTER_COLLISION: number = 0.8;
   private static PARTICLE_DISTANCE_AFTER_COLISION: number = 2;
+  private static DEFAULT_TINT: number = 0x00ffff;
+  private static DEFAULT_ALPHA: number = 1;
   private _particles: Particles;
   private _amount: number;
   private _size: number;
+  private _alpha: number;
+  private _tint: number;
   private _scene: ParticleScene;
   private _initialPosition: Point;
   private _inaccuracy: Inaccuracy;
   private _colisionBoard: Board;
+  private _particleTexture: PIXI.Texture = PIXI.Texture.WHITE;
   constructor(
     scene: ParticleScene,
     {
@@ -37,15 +45,21 @@ export class ParticleManager {
       size = 5,
       initialPosition = new Point(0, 0),
       inaccuracy,
-      colisionBoard
+      colisionBoard,
+      particleTexture,
+      tint = ParticleManager.DEFAULT_TINT,
+      alpha = ParticleManager.DEFAULT_ALPHA
     }: ParticleManagerConfig
   ) {
+    this._alpha = alpha;
+    this._tint = tint;
     this._colisionBoard = colisionBoard;
     this._scene = scene;
     this._particles = [];
     this._amount = amount;
     this._size = size;
     this._initialPosition = initialPosition;
+    this._particleTexture = particleTexture;
     if (
       inaccuracy &&
       (typeof inaccuracy.max != "number" ||
@@ -59,12 +73,20 @@ export class ParticleManager {
   }
 
   private initManager = () => {
-    const { _size: size, _initialPosition: initialPosition } = this;
+    const {
+      _size: size,
+      _initialPosition: initialPosition,
+      _particleTexture: particleTexture,
+      _tint: tint,
+      _alpha: alpha
+    } = this;
     for (let i = 0; i < this._amount; i++) {
-      const particle = new Particle(this._scene, {
+      const particle = new Particle({
         initialPosition,
         size,
-        fillStyle: { color: 0xff0000 }
+        particleTexture,
+        tint,
+        alpha
       });
       this._particles.push(particle);
     }

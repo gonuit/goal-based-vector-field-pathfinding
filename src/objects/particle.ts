@@ -5,10 +5,13 @@ import { Utils } from "./utils";
 import { Inaccuracy } from "./particleManager";
 import { ParticleScene } from "../engine/particleScene";
 
-export interface ParticleConfig extends GraphicsOptions {
+export interface ParticleConfig {
   initialPosition?: Point;
+  particleTexture?: PIXI.Texture;
   size?: number;
   mass?: number;
+  tint?: number;
+  alpha?: number;
 }
 
 export class Particle extends PIXI.Sprite {
@@ -16,31 +19,29 @@ export class Particle extends PIXI.Sprite {
   private static MAX_FORCE: number = 0.2;
   private static MAX_SPEED: number = 2;
   private static DEFAULT_MASS: number = 1.5;
+  private static DEFAULT_TINT: number = 0x00ffff;
+  private static DEFAULT_ALPHA: number = 1;
   private _size: number;
   private _mass: number;
   private _steering: ForceVector;
   private _velocity: ForceVector;
-  private _scene: ParticleScene;
-  constructor(scene, params: ParticleConfig = {}) {
+  private _particleTexture: PIXI.Texture;
+  constructor(params?: ParticleConfig) {
     super(PIXI.Texture.WHITE);
     const {
       initialPosition = new Point(0, 0),
       size = 5,
       mass = Particle.DEFAULT_MASS
     } = params;
-    this._scene = scene;
     this._size = size;
+    this.tint = params.tint || Particle.DEFAULT_TINT
+    this.alpha = params.alpha || Particle.DEFAULT_ALPHA
     this._mass = mass;
+    this._particleTexture = params.particleTexture || PIXI.Texture.WHITE;
     this.position.x = initialPosition.x;
     this.position.y = initialPosition.y;
     this._velocity = new ForceVector(0, 0);
-    // must be last
-    this.initElement();
-  }
-
-  private initElement() {
-    this.texture = PIXI.Texture.from("../../assets/image/particle.png");
-    this.tint = 0x00ffff;
+    this.texture = this._particleTexture;
     this.zIndex = 100;
   }
 

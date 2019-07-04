@@ -10,7 +10,7 @@ import { Scene } from "../engine/scene";
 interface MainSceneConfig extends ParticleSceneConfig {}
 
 export class MainScene extends Scene {
-  private static MAX_PARTICLES_COUNT: number = 20000;
+  private static MAX_PARTICLES_COUNT: number = 40000;
   constructor({ name }: MainSceneConfig) {
     super({
       name,
@@ -140,20 +140,21 @@ export class MainScene extends Scene {
     };
 
     this.particleManager = new ParticleManager(this.particleScene, {
-      amount: 6,
+      amount: 20000,
       inaccuracy: { min: 0.5, max: 1 },
       initialPosition: new Point(100, 100),
-      colisionBoard: this.colisionBoard
+      colisionBoard: this.colisionBoard,
+      particleTexture: PIXI.Texture.from("../../assets/image/particle.png"),
+      tint: 0xff00ff,
+      alpha: 0.5
     });
 
     this.particleThreadsManager = new ParticleThreadsManager({
       board: this.validBoard,
       colisionBoard: this.colisionBoard,
       particleManager: this.particleManager,
-      numberOfThreads: 2
+      numberOfThreads: 4
     });
-
-
   };
 
   update = () => {
