@@ -10,7 +10,7 @@ import { Scene } from "../engine/scene";
 interface MainSceneConfig extends ParticleSceneConfig {}
 
 export class MainScene extends Scene {
-  private static THREADS_COUNT: number = 4;
+  private static THREADS_COUNT: number = 2;
   private static PARTICLES_COUNT: number = 10000;
   private static MAX_PARTICLES_COUNT: number = 40000;
   constructor({ name }: MainSceneConfig) {
@@ -45,6 +45,7 @@ export class MainScene extends Scene {
   private isTrackingPaused: boolean;
   private inertia: boolean;
   private inertiaInitialized: boolean;
+  private isSingleThread: boolean;
 
   private info: PIXI.BitmapText;
   private helpText: PIXI.BitmapText;
@@ -53,6 +54,7 @@ export class MainScene extends Scene {
   private particleManager: ParticleManager;
 
   init = () => {
+    this.isSingleThread = false;
     this.isTrackingPaused = false;
     this.fieldSize = 40;
     this.ui = new Statistics(this);
@@ -152,7 +154,7 @@ export class MainScene extends Scene {
       initialPosition: new Point(100, 100),
       colisionBoard: this.colisionBoard,
       particleTexture: PIXI.Texture.from("../../assets/image/particle.png"),
-      tint: 0xff0000,
+      tint: 0x00ffff,
       alpha: 0.5
     });
 
@@ -178,7 +180,8 @@ export class MainScene extends Scene {
         this.validBoard = this.validBoard
           .calculateBoxesDistance(hoverBoxPosition)
           .render();
-        this.particleThreadsManager.updateBoardVectors();
+        if (!this.isSingleThread)
+          this.particleThreadsManager.updateBoardVectors();
       } else if (
         this.validBoard.rendererConfig.indicateBoardRefresh &&
         this.validBoard.indicateRefresh
@@ -186,11 +189,12 @@ export class MainScene extends Scene {
         this.validBoard = this.validBoard.render();
       }
     } else if (this.inertia && !this.inertiaInitialized) {
+      this.inertiaInitialized = true;
       this.validBoard = this.validBoard.reset().render();
-      this.particleThreadsManager.updateBoardVectors();
+      if(!this.isSingleThread) this.particleThreadsManager.updateBoardVectors();
     }
-    this.particleThreadsManager.updateParticlesPositions();
-    // this.particleManager.moveByPath(this.validBoard);
+    if (this.isSingleThread) this.particleManager.moveByPath(this.validBoard);
+    else this.particleThreadsManager.updateParticlesPositions();
   };
 
   unmount = () => {};

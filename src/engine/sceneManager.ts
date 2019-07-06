@@ -50,7 +50,6 @@ export class SceneManager {
 
   private render = () => {
     this._currentScene.update();
-    // this._renderer.render(this._currentScene);
     this._renderer.render(this._currentScene);
   };
 
