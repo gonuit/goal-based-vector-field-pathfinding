@@ -175,7 +175,7 @@ export class ShallowParticle {
         ShallowParticle.PARTICLE_DISTANCE_AFTER_COLISION;
       this.velocity = new ForceVector(
         -this.velocity.x * ShallowParticle.FORCE_PERCENTAGE_AFTER_COLLISION,
-        -this.velocity.y * ShallowParticle.FORCE_PERCENTAGE_AFTER_COLLISION
+        this.velocity.y * ShallowParticle.FORCE_PERCENTAGE_AFTER_COLLISION
       );
     } else if (
       topLeft &&
@@ -194,7 +194,7 @@ export class ShallowParticle {
         ShallowParticle.PARTICLE_DISTANCE_AFTER_COLISION;
       this.velocity = new ForceVector(
         -this.velocity.x * ShallowParticle.FORCE_PERCENTAGE_AFTER_COLLISION,
-        -this.velocity.y * ShallowParticle.FORCE_PERCENTAGE_AFTER_COLLISION
+        this.velocity.y * ShallowParticle.FORCE_PERCENTAGE_AFTER_COLLISION
       );
     } else if (
       bottomLeft &&
@@ -213,7 +213,7 @@ export class ShallowParticle {
         ShallowParticle.PARTICLE_DISTANCE_AFTER_COLISION;
       this.velocity = new ForceVector(
         -this.velocity.x * ShallowParticle.FORCE_PERCENTAGE_AFTER_COLLISION,
-        -this.velocity.y * ShallowParticle.FORCE_PERCENTAGE_AFTER_COLLISION
+        this.velocity.y * ShallowParticle.FORCE_PERCENTAGE_AFTER_COLLISION
       );
     } else if (
       bottomRight &&
@@ -232,7 +232,7 @@ export class ShallowParticle {
         ShallowParticle.PARTICLE_DISTANCE_AFTER_COLISION;
       this.velocity = new ForceVector(
         -this.velocity.x * ShallowParticle.FORCE_PERCENTAGE_AFTER_COLLISION,
-        -this.velocity.y * ShallowParticle.FORCE_PERCENTAGE_AFTER_COLLISION
+        this.velocity.y * ShallowParticle.FORCE_PERCENTAGE_AFTER_COLLISION
       );
     }
     return this;
