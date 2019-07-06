@@ -12,7 +12,7 @@ interface MainSceneConfig extends ParticleSceneConfig {}
 export class MainScene extends Scene {
   private static THREADS_COUNT: number = 2;
   private static PARTICLES_COUNT: number = 10000;
-  private static MAX_PARTICLES_COUNT: number = 40000;
+  private static MAX_PARTICLES_COUNT: number = 10000;
   constructor({ name }: MainSceneConfig) {
     super({
       name,
