@@ -65,7 +65,7 @@ export class MainScene extends Scene {
   preload = async () => {
     let options = { crossOrigin: true };
     const loader = new PIXI.Loader();
-    loader.add("font", "src/assets/font/font.fnt", options);
+    loader.add("font", "assets/font/font.fnt", options);
     await new Promise((res, rej) => {
       loader.onComplete.add(res);
       loader.load();
