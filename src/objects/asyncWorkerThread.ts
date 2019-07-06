@@ -1,8 +1,5 @@
-export interface WorkerThreadConfig {
-  url: string;
-}
-
-export abstract class WorkerThread {
+// !Currently unused
+export abstract class AsyncWorkerThread {
   abstract worker: Worker;
 
   private handleMessage = (
