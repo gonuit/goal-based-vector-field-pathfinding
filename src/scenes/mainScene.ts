@@ -27,7 +27,7 @@ export class MainScene extends Scene {
     });
     this.particleScene.visible = true;
     this.particleScene.zIndex = 1000;
-    this.stage = new Scene({ withMouse: false, name: "XD" });
+    this.stage = new Scene({ withMouse: false, name: "scene" });
     this.addChild(this.stage);
     this.addChild(this.particleScene);
   }
@@ -49,12 +49,13 @@ export class MainScene extends Scene {
 
   private info: PIXI.BitmapText;
   private helpText: PIXI.BitmapText;
+  private authorText: PIXI.BitmapText;
 
   private particleThreadsManager: ParticleThreadsManager;
   private particleManager: ParticleManager;
 
   init = () => {
-    this.isSingleThread = false;
+    this.isSingleThread = !this.hasBrowserWebWorkersSupport();
     this.isTrackingPaused = false;
     this.fieldSize = 40;
     this.ui = new Statistics(this);
@@ -191,7 +192,8 @@ export class MainScene extends Scene {
     } else if (this.inertia && !this.inertiaInitialized) {
       this.inertiaInitialized = true;
       this.validBoard = this.validBoard.reset().render();
-      if(!this.isSingleThread) this.particleThreadsManager.updateBoardVectors();
+      if (!this.isSingleThread)
+        this.particleThreadsManager.updateBoardVectors();
     }
     if (this.isSingleThread) this.particleManager.moveByPath(this.validBoard);
     else this.particleThreadsManager.updateParticlesPositions();
@@ -201,11 +203,14 @@ export class MainScene extends Scene {
 
   destroy = () => {};
 
+  private hasBrowserWebWorkersSupport = (): boolean =>
+    Boolean((window as any).Worker);
+
   private initText = () => {
     this.info = new PIXI.BitmapText(
-      `Threads: ${MainScene.THREADS_COUNT + 1} Particles: ${
-        MainScene.PARTICLES_COUNT
-      }`,
+      `Threads: ${
+        this.isSingleThread ? 1 : MainScene.THREADS_COUNT + 1
+      } Particles: ${MainScene.PARTICLES_COUNT}`,
       {
         font: { name: "font", size: 11 },
         tint: 0x000000
@@ -218,6 +223,14 @@ export class MainScene extends Scene {
         tint: 0x000000
       }
     );
+    this.authorText = new PIXI.BitmapText(`Author github id: gonuit`, {
+      font: { name: "font", size: 8 },
+      tint: 0x000000
+    });
+    this.authorText.x = 630;
+    this.authorText.y = 825;
+    this.authorText.zIndex = 50;
+    this.stage.addChild(this.authorText);
     this.info.x = 40;
     this.info.y = 25;
     this.info.zIndex = 50;
