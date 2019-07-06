@@ -1,6 +1,8 @@
 # Goal-Based Vector Field Pathfinding
 
 ![screen](./github/screen.png)
+![screen](./github/screen2.png)
+![screen](./github/screen3.png)
 
 - [Goal-Based Vector Field Pathfinding](#Goal-Based-Vector-Field-Pathfinding)
 - [1. Setup](#1-Setup)
