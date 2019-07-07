@@ -27,10 +27,10 @@ class ParticleWorker {
       this._particles.push(
         new ShallowParticle({
           initialPosition: new Point(x, y),
-          
+          mass: Utils.getRandomFloat(0.9, 1.7),
           initialVelocity: new ForceVector(
-            Utils.getRandomFloat(-10, 10),
-            Utils.getRandomFloat(-10, 10)
+            Utils.getRandomFloat(-2, 2),
+            Utils.getRandomFloat(-2, 2)
           )
         })
       );

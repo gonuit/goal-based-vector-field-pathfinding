@@ -14,7 +14,7 @@ export interface ShallowParticleConfig {
 export class ShallowParticle {
   private static FORCE_PERCENTAGE_AFTER_COLLISION: number = 0.8;
   private static PARTICLE_DISTANCE_AFTER_COLISION: number = 2;
-  private static MAX_VELOCITY: number = 10;
+  private static MAX_VELOCITY: number = 5;
   private static MAX_FORCE: number = 0.2;
   private static MAX_SPEED: number = 3;
   private static DEFAULT_MASS: number = 1.5;
