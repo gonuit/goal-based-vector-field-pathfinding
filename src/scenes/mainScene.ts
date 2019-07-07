@@ -217,7 +217,7 @@ export class MainScene extends Scene {
       }
     );
     this.helpText = new PIXI.BitmapText(
-      `Shift: turn of tracking \nSpace: pause tracking\n1,2,3,4: pathfinding debug view   `,
+      `Shift: turn off tracking \nSpace: pause tracking\n1,2,3,4: pathfinding debug view   `,
       {
         font: { name: "font", size: 8 },
         tint: 0x000000
