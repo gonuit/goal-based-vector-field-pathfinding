@@ -12,6 +12,7 @@ export interface ParticleConfig {
   mass?: number;
   tint?: number;
   alpha?: number;
+  initialVelocity?: ForceVector;
 }
 
 export class Particle extends PIXI.Sprite {
@@ -31,16 +32,17 @@ export class Particle extends PIXI.Sprite {
     const {
       initialPosition = new Point(0, 0),
       size = 5,
-      mass = Particle.DEFAULT_MASS
+      mass = Particle.DEFAULT_MASS,
+      initialVelocity = new ForceVector(0, 0)
     } = params;
     this._size = size;
-    this.tint = params.tint || Particle.DEFAULT_TINT
-    this.alpha = params.alpha || Particle.DEFAULT_ALPHA
+    this.tint = params.tint || Particle.DEFAULT_TINT;
+    this.alpha = params.alpha || Particle.DEFAULT_ALPHA;
     this._mass = mass;
     this._particleTexture = params.particleTexture || PIXI.Texture.WHITE;
     this.position.x = initialPosition.x;
     this.position.y = initialPosition.y;
-    this._velocity = new ForceVector(0, 0);
+    this._velocity = initialVelocity;
     this.texture = this._particleTexture;
     this.zIndex = 100;
   }

@@ -5,6 +5,8 @@ import {
 } from "../workersObjects/workerShallowBoard";
 import { ShallowParticle } from "../workersObjects/shallowParticle";
 import { Point } from "../objects/point";
+import { ForceVector } from "../objects/forceVector";
+import { Utils } from "../objects/utils";
 
 // // Worker.ts
 const ctx: Worker = self as any;
@@ -23,7 +25,14 @@ class ParticleWorker {
       const x: number = array[i * 2];
       const y: number = array[i * 2 + 1];
       this._particles.push(
-        new ShallowParticle({ initialPosition: new Point(x, y) })
+        new ShallowParticle({
+          initialPosition: new Point(x, y),
+          
+          initialVelocity: new ForceVector(
+            Utils.getRandomFloat(-10, 10),
+            Utils.getRandomFloat(-10, 10)
+          )
+        })
       );
     }
   };
