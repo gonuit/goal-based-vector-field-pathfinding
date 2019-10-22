@@ -18,16 +18,16 @@
     "typescript": "^3.5.2",
     "webpack": "4.31.0",
     "webpack-cli": "3.3.2",
-    "webpack-dev-server": "3.3.1"
+    "webpack-dev-server": "3.3.1",
+    "worker-loader": "^2.0.0"
   },
   "dependencies": {
-    "phaser": "3.16.2",
     "pixi.js": "^5.0.4",
     "stats.js": "^0.17.0"
   },
   "scripts": {
     "dev": "webpack --mode development && webpack-dev-server --mode development",
-    "build": "webpack --mode production && webpack-dev-server --mode production --host 0.0.0.0"
+    "build": "webpack --mode production && webpack-dev-server --mode production"
   },
   "repository": {
     "type": "git",

@@ -8,14 +8,15 @@ export interface ShallowParticleConfig {
   initialPosition?: Point;
   size?: number;
   mass?: number;
+  initialVelocity?: ForceVector;
 }
 
 export class ShallowParticle {
   private static FORCE_PERCENTAGE_AFTER_COLLISION: number = 0.8;
   private static PARTICLE_DISTANCE_AFTER_COLISION: number = 2;
-  private static MAX_VELOCITY: number = 10;
+  private static MAX_VELOCITY: number = 5;
   private static MAX_FORCE: number = 0.2;
-  private static MAX_SPEED: number = 2;
+  private static MAX_SPEED: number = 3;
   private static DEFAULT_MASS: number = 1.5;
   public x: number;
   public y: number;
@@ -27,13 +28,14 @@ export class ShallowParticle {
     const {
       initialPosition = new Point(0, 0),
       size = 5,
-      mass = ShallowParticle.DEFAULT_MASS
+      mass = ShallowParticle.DEFAULT_MASS,
+      initialVelocity = new ForceVector(0,0)
     } = config;
     this._size = size;
     this._mass = mass;
     this.x = initialPosition.x;
     this.y = initialPosition.y;
-    this._velocity = new ForceVector(0, 0);
+    this._velocity = initialVelocity;
   }
 
   public setVelocity(newVelocity: ForceVector): ShallowParticle {
@@ -106,6 +108,10 @@ export class ShallowParticle {
       bottomRight
     } = colisionBoard.getShallowNamedChildrens(boxPosition.x, boxPosition.y);
 
+    const inaccuracy = {
+      min: 0.1,
+      max: 1
+    };
     if (
       bottom &&
       this.y + this._size >= bottom.centerPositionY - boxSize * 0.65
@@ -117,32 +123,32 @@ export class ShallowParticle {
         ShallowParticle.PARTICLE_DISTANCE_AFTER_COLISION;
       this.velocity = new ForceVector(
         this.velocity.x,
-        -this.velocity.y * ShallowParticle.FORCE_PERCENTAGE_AFTER_COLLISION
+        -this.velocity.y * Utils.getRandomFloat(inaccuracy.max, inaccuracy.min)
       );
     } else if (
       top &&
-      this.y - this._size <= top.centerPositionY + boxSize * 0.45
+      this.y - this._size <= top.centerPositionY + boxSize * 0.47
     ) {
       this.y =
         top.centerPositionY +
-        boxSize * 0.45 +
+        boxSize * 0.47 +
         this._size +
         ShallowParticle.PARTICLE_DISTANCE_AFTER_COLISION;
       this.velocity = new ForceVector(
         this.velocity.x,
-        -this.velocity.y * ShallowParticle.FORCE_PERCENTAGE_AFTER_COLLISION
+        -this.velocity.y * Utils.getRandomFloat(inaccuracy.max, inaccuracy.min)
       );
     } else if (
       left &&
-      this.x - this._size <= left.centerPositionX + boxSize * 0.45
+      this.x - this._size <= left.centerPositionX + boxSize * 0.47
     ) {
       this.x =
         left.centerPositionX +
-        boxSize * 0.45 +
+        boxSize * 0.47 +
         this._size +
         ShallowParticle.PARTICLE_DISTANCE_AFTER_COLISION;
       this.velocity = new ForceVector(
-        -this.velocity.x * ShallowParticle.FORCE_PERCENTAGE_AFTER_COLLISION,
+        -this.velocity.x * Utils.getRandomFloat(inaccuracy.max, inaccuracy.min),
         this.velocity.y
       );
     } else if (
@@ -155,13 +161,13 @@ export class ShallowParticle {
         this._size -
         ShallowParticle.PARTICLE_DISTANCE_AFTER_COLISION;
       this.velocity = new ForceVector(
-        -this.velocity.x * ShallowParticle.FORCE_PERCENTAGE_AFTER_COLLISION,
+        -this.velocity.x * Utils.getRandomFloat(inaccuracy.max, inaccuracy.min),
         this.velocity.y
       );
     } else if (
       topRight &&
       this.x + this._size >= topRight.centerPositionX - boxSize * 0.65 &&
-      this.y - this._size <= topRight.centerPositionY + boxSize * 0.45
+      this.y - this._size <= topRight.centerPositionY + boxSize * 0.47
     ) {
       this.x =
         topRight.centerPositionX -
@@ -170,40 +176,40 @@ export class ShallowParticle {
         ShallowParticle.PARTICLE_DISTANCE_AFTER_COLISION;
       this.y =
         topRight.centerPositionY +
-        boxSize * 0.45 +
+        boxSize * 0.65 +
         this._size +
         ShallowParticle.PARTICLE_DISTANCE_AFTER_COLISION;
       this.velocity = new ForceVector(
-        -this.velocity.x * ShallowParticle.FORCE_PERCENTAGE_AFTER_COLLISION,
-        -this.velocity.y * ShallowParticle.FORCE_PERCENTAGE_AFTER_COLLISION
+        -this.velocity.x * Utils.getRandomFloat(inaccuracy.max, inaccuracy.min),
+        this.velocity.y * Utils.getRandomFloat(inaccuracy.max, inaccuracy.min)
       );
     } else if (
       topLeft &&
-      this.x - this._size <= topLeft.centerPositionX + boxSize * 0.45 &&
-      this.y - this._size <= topLeft.centerPositionY + boxSize * 0.45
+      this.x - this._size <= topLeft.centerPositionX + boxSize * 0.47 &&
+      this.y - this._size <= topLeft.centerPositionY + boxSize * 0.47
     ) {
       this.x =
         topLeft.centerPositionX +
-        boxSize * 0.45 +
+        boxSize * 0.65 +
         this._size +
         ShallowParticle.PARTICLE_DISTANCE_AFTER_COLISION;
       this.y =
         topLeft.centerPositionY +
-        boxSize * 0.45 +
+        boxSize * 0.65 +
         this._size +
         ShallowParticle.PARTICLE_DISTANCE_AFTER_COLISION;
       this.velocity = new ForceVector(
-        -this.velocity.x * ShallowParticle.FORCE_PERCENTAGE_AFTER_COLLISION,
-        -this.velocity.y * ShallowParticle.FORCE_PERCENTAGE_AFTER_COLLISION
+        -this.velocity.x * Utils.getRandomFloat(inaccuracy.max, inaccuracy.min),
+        this.velocity.y * Utils.getRandomFloat(inaccuracy.max, inaccuracy.min)
       );
     } else if (
       bottomLeft &&
-      this.x - this._size <= bottomLeft.centerPositionX + boxSize * 0.45 &&
+      this.x - this._size <= bottomLeft.centerPositionX + boxSize * 0.47 &&
       this.y + this._size >= bottomLeft.centerPositionY - boxSize * 0.65
     ) {
       this.x =
         bottomLeft.centerPositionX +
-        boxSize * 0.45 +
+        boxSize * 0.65 +
         this._size +
         ShallowParticle.PARTICLE_DISTANCE_AFTER_COLISION;
       this.y =
@@ -212,8 +218,8 @@ export class ShallowParticle {
         this._size -
         ShallowParticle.PARTICLE_DISTANCE_AFTER_COLISION;
       this.velocity = new ForceVector(
-        -this.velocity.x * ShallowParticle.FORCE_PERCENTAGE_AFTER_COLLISION,
-        -this.velocity.y * ShallowParticle.FORCE_PERCENTAGE_AFTER_COLLISION
+        -this.velocity.x * Utils.getRandomFloat(inaccuracy.max, inaccuracy.min),
+        this.velocity.y * Utils.getRandomFloat(inaccuracy.max, inaccuracy.min)
       );
     } else if (
       bottomRight &&
@@ -231,8 +237,8 @@ export class ShallowParticle {
         this._size -
         ShallowParticle.PARTICLE_DISTANCE_AFTER_COLISION;
       this.velocity = new ForceVector(
-        -this.velocity.x * ShallowParticle.FORCE_PERCENTAGE_AFTER_COLLISION,
-        -this.velocity.y * ShallowParticle.FORCE_PERCENTAGE_AFTER_COLLISION
+        -this.velocity.x * Utils.getRandomFloat(inaccuracy.max, inaccuracy.min),
+        this.velocity.y * Utils.getRandomFloat(inaccuracy.max, inaccuracy.min)
       );
     }
     return this;
