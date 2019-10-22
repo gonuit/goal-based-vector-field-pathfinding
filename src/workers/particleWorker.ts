@@ -77,9 +77,9 @@ class ParticleWorker {
       const boxUnderParticle: ShallowBox = this._board.getBoxByDimensions(x, y);
       if (!boxUnderParticle) {
         // console.warn(
-        //   "Particle Worker:\n",
-        //   "Bad particle position\n",
-        //   "(Inert motion)"
+        //   'Particle Worker:\n',
+        //   'Bad particle position\n',
+        //   '(Inert motion)',
         // );
         particle.moveByVelocity();
       } else {
@@ -119,16 +119,18 @@ onmessage = function({ data }) {
         PTMsgType.setVectorsDone,
       ]).buffer;
       ctx.postMessage({ buff: vectorsDoneBuffer }, [vectorsDoneBuffer]);
+      return;
     }
     case PTMsgType.updatePositions: {
       const newParticlePositionsBuffer: ArrayBuffer = particleWorker.updateParticlesPositions();
-      if (newParticlePositionsBuffer)
+      if (newParticlePositionsBuffer != undefined)
         ctx.postMessage({ buff: newParticlePositionsBuffer }, [
           newParticlePositionsBuffer,
         ]);
-      else return;
+      return;
     }
     default: {
+      console.warn('unknown thread signal', type);
     }
   }
 };

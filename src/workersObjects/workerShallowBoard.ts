@@ -47,7 +47,7 @@ export class WorkerShallowBoard {
       this.shallowBoxMap[col] = new Array(this._verticalBoxes);
     }
     this.setShallowBoxMap(boxMap);
-    console.log(`initialized thread`);
+    console.log(`thread initialized`);
   };
 
   public setShallowBoxMap = (boxMap: Array<number> | Float64Array): void => {

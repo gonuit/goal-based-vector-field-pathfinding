@@ -28,7 +28,8 @@
   },
   "scripts": {
     "dev": "webpack --mode development && webpack-dev-server --mode development",
-    "build": "webpack --mode production && webpack-dev-server --mode production"
+    "build": "webpack --mode production && webpack-dev-server --mode production",
+    "fixcode": "prettier --write \"src/**/*.ts\""
   },
   "repository": {
     "type": "git",
