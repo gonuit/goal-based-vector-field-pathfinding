@@ -1,8 +1,8 @@
-import { Point } from "../objects/point";
-import { ForceVector } from "../objects/forceVector";
-import { Inaccuracy } from "../objects/particleManager";
-import { Utils } from "../objects/utils";
-import { WorkerShallowBoard } from "./workerShallowBoard";
+import { Point } from '../objects/point';
+import { ForceVector } from '../objects/forceVector';
+import { Inaccuracy } from '../objects/particleManager';
+import { Utils } from '../objects/utils';
+import { WorkerShallowBoard } from './workerShallowBoard';
 
 export interface ShallowParticleConfig {
   initialPosition?: Point;
@@ -29,7 +29,7 @@ export class ShallowParticle {
       initialPosition = new Point(0, 0),
       size = 5,
       mass = ShallowParticle.DEFAULT_MASS,
-      initialVelocity = new ForceVector(0,0)
+      initialVelocity = new ForceVector(0, 0),
     } = config;
     this._size = size;
     this._mass = mass;
@@ -80,22 +80,22 @@ export class ShallowParticle {
 
   public toParticlePositionObject = () => ({
     x: this.x,
-    y: this.y
+    y: this.y,
   });
 
   private getCenterPosition = (): { x: number; y: number } => ({
     x: this.x + this._size * 0.5,
-    y: this.y + this._size * 0.5
+    y: this.y + this._size * 0.5,
   });
 
   public checkColisions = (
-    colisionBoard: WorkerShallowBoard
+    colisionBoard: WorkerShallowBoard,
   ): ShallowParticle => {
     const boxSize = colisionBoard.boxSize;
     const centerParticlePosition = this.getCenterPosition();
     const boxPosition = colisionBoard.getBoxPositionByDimensions(
       centerParticlePosition.x,
-      centerParticlePosition.y
+      centerParticlePosition.y,
     );
     const {
       right,
@@ -105,12 +105,12 @@ export class ShallowParticle {
       topRight,
       topLeft,
       bottomLeft,
-      bottomRight
+      bottomRight,
     } = colisionBoard.getShallowNamedChildrens(boxPosition.x, boxPosition.y);
 
     const inaccuracy = {
       min: 0.1,
-      max: 1
+      max: 1,
     };
     if (
       bottom &&
@@ -123,7 +123,7 @@ export class ShallowParticle {
         ShallowParticle.PARTICLE_DISTANCE_AFTER_COLISION;
       this.velocity = new ForceVector(
         this.velocity.x,
-        -this.velocity.y * Utils.getRandomFloat(inaccuracy.max, inaccuracy.min)
+        -this.velocity.y * Utils.getRandomFloat(inaccuracy.max, inaccuracy.min),
       );
     } else if (
       top &&
@@ -136,7 +136,7 @@ export class ShallowParticle {
         ShallowParticle.PARTICLE_DISTANCE_AFTER_COLISION;
       this.velocity = new ForceVector(
         this.velocity.x,
-        -this.velocity.y * Utils.getRandomFloat(inaccuracy.max, inaccuracy.min)
+        -this.velocity.y * Utils.getRandomFloat(inaccuracy.max, inaccuracy.min),
       );
     } else if (
       left &&
@@ -149,7 +149,7 @@ export class ShallowParticle {
         ShallowParticle.PARTICLE_DISTANCE_AFTER_COLISION;
       this.velocity = new ForceVector(
         -this.velocity.x * Utils.getRandomFloat(inaccuracy.max, inaccuracy.min),
-        this.velocity.y
+        this.velocity.y,
       );
     } else if (
       right &&
@@ -162,7 +162,7 @@ export class ShallowParticle {
         ShallowParticle.PARTICLE_DISTANCE_AFTER_COLISION;
       this.velocity = new ForceVector(
         -this.velocity.x * Utils.getRandomFloat(inaccuracy.max, inaccuracy.min),
-        this.velocity.y
+        this.velocity.y,
       );
     } else if (
       topRight &&
@@ -181,7 +181,7 @@ export class ShallowParticle {
         ShallowParticle.PARTICLE_DISTANCE_AFTER_COLISION;
       this.velocity = new ForceVector(
         -this.velocity.x * Utils.getRandomFloat(inaccuracy.max, inaccuracy.min),
-        this.velocity.y * Utils.getRandomFloat(inaccuracy.max, inaccuracy.min)
+        this.velocity.y * Utils.getRandomFloat(inaccuracy.max, inaccuracy.min),
       );
     } else if (
       topLeft &&
@@ -200,7 +200,7 @@ export class ShallowParticle {
         ShallowParticle.PARTICLE_DISTANCE_AFTER_COLISION;
       this.velocity = new ForceVector(
         -this.velocity.x * Utils.getRandomFloat(inaccuracy.max, inaccuracy.min),
-        this.velocity.y * Utils.getRandomFloat(inaccuracy.max, inaccuracy.min)
+        this.velocity.y * Utils.getRandomFloat(inaccuracy.max, inaccuracy.min),
       );
     } else if (
       bottomLeft &&
@@ -219,7 +219,7 @@ export class ShallowParticle {
         ShallowParticle.PARTICLE_DISTANCE_AFTER_COLISION;
       this.velocity = new ForceVector(
         -this.velocity.x * Utils.getRandomFloat(inaccuracy.max, inaccuracy.min),
-        this.velocity.y * Utils.getRandomFloat(inaccuracy.max, inaccuracy.min)
+        this.velocity.y * Utils.getRandomFloat(inaccuracy.max, inaccuracy.min),
       );
     } else if (
       bottomRight &&
@@ -238,7 +238,7 @@ export class ShallowParticle {
         ShallowParticle.PARTICLE_DISTANCE_AFTER_COLISION;
       this.velocity = new ForceVector(
         -this.velocity.x * Utils.getRandomFloat(inaccuracy.max, inaccuracy.min),
-        this.velocity.y * Utils.getRandomFloat(inaccuracy.max, inaccuracy.min)
+        this.velocity.y * Utils.getRandomFloat(inaccuracy.max, inaccuracy.min),
       );
     }
     return this;

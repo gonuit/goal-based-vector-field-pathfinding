@@ -1,5 +1,5 @@
-import * as PIXI from "pixi.js";
-import { Point } from "../objects/point";
+import * as PIXI from 'pixi.js';
+import { Point } from '../objects/point';
 
 interface ListenersConfig {
   withMouse?: boolean;
@@ -23,7 +23,7 @@ export class Scene extends PIXI.Container {
   }
 
   protected input = {
-    mouse: { position: new Point(0, 0) }
+    mouse: { position: new Point(0, 0) },
   };
 
   public preload = async () => {};
@@ -47,7 +47,7 @@ export class Scene extends PIXI.Container {
   private _addListeners = ({ withMouse }: ListenersConfig) => {
     if (withMouse)
       document
-        .getElementById("game")
-        .addEventListener("mousemove", this._handleMousePosition);
+        .getElementById('game')
+        .addEventListener('mousemove', this._handleMousePosition);
   };
 }

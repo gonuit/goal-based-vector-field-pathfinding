@@ -1,12 +1,12 @@
-import { PTMsgType } from "../workersObjects/PTMsgType";
+import { PTMsgType } from '../workersObjects/PTMsgType';
 import {
   WorkerShallowBoard,
-  ShallowBox
-} from "../workersObjects/workerShallowBoard";
-import { ShallowParticle } from "../workersObjects/shallowParticle";
-import { Point } from "../objects/point";
-import { ForceVector } from "../objects/forceVector";
-import { Utils } from "../objects/utils";
+  ShallowBox,
+} from '../workersObjects/workerShallowBoard';
+import { ShallowParticle } from '../workersObjects/shallowParticle';
+import { Point } from '../objects/point';
+import { ForceVector } from '../objects/forceVector';
+import { Utils } from '../objects/utils';
 
 // // Worker.ts
 const ctx: Worker = self as any;
@@ -30,9 +30,9 @@ class ParticleWorker {
           mass: Utils.getRandomFloat(0.9, 1.7),
           initialVelocity: new ForceVector(
             Utils.getRandomFloat(-2, 2),
-            Utils.getRandomFloat(-2, 2)
-          )
-        })
+            Utils.getRandomFloat(-2, 2),
+          ),
+        }),
       );
     }
   };
@@ -116,7 +116,7 @@ onmessage = function({ data }) {
     case PTMsgType.setVectors: {
       particleWorker.setVectors(data.validBoardBuffer);
       const vectorsDoneBuffer: ArrayBuffer = new Float64Array([
-        PTMsgType.setVectorsDone
+        PTMsgType.setVectorsDone,
       ]).buffer;
       ctx.postMessage({ buff: vectorsDoneBuffer }, [vectorsDoneBuffer]);
     }
@@ -124,7 +124,7 @@ onmessage = function({ data }) {
       const newParticlePositionsBuffer: ArrayBuffer = particleWorker.updateParticlesPositions();
       if (newParticlePositionsBuffer)
         ctx.postMessage({ buff: newParticlePositionsBuffer }, [
-          newParticlePositionsBuffer
+          newParticlePositionsBuffer,
         ]);
       else return;
     }

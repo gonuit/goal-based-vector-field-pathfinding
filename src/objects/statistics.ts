@@ -1,6 +1,6 @@
-import { Scene } from "../engine/scene";
+import { Scene } from '../engine/scene';
 
-export class Statistics  {
+export class Statistics {
   private _prevTime: number;
   private _minFPS: number;
   private _maxFPS: number;
@@ -23,8 +23,8 @@ export class Statistics  {
       this._bitmapFPS.destroy();
       this._bitmapFPS = undefined;
     }
-    this._bitmapFPS = new PIXI.BitmapText("FPS", {
-      font: { name: "font", size: 24 }
+    this._bitmapFPS = new PIXI.BitmapText('FPS', {
+      font: { name: 'font', size: 24 },
     });
   }
 

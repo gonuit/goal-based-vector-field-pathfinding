@@ -1,4 +1,4 @@
-import Stats = require("stats.js");
+import Stats = require('stats.js');
 
 export class Updater {
   private _stats: Stats;
@@ -20,7 +20,7 @@ export class Updater {
 
   public resume = () => {
     if (!this._updateFunction)
-      throw new Error("Updater is not paused, cannot resume");
+      throw new Error('Updater is not paused, cannot resume');
     requestAnimationFrame(this.update);
   };
 

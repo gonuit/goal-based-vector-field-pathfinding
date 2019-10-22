@@ -1,9 +1,9 @@
-import * as PIXI from "pixi.js";
-import { Point } from "./point";
-import { ForceVector } from "./forceVector";
-import { Utils } from "./utils";
-import { Inaccuracy } from "./particleManager";
-import { ParticleScene } from "../engine/particleScene";
+import * as PIXI from 'pixi.js';
+import { Point } from './point';
+import { ForceVector } from './forceVector';
+import { Utils } from './utils';
+import { Inaccuracy } from './particleManager';
+import { ParticleScene } from '../engine/particleScene';
 
 export interface ParticleConfig {
   initialPosition?: Point;
@@ -33,7 +33,7 @@ export class Particle extends PIXI.Sprite {
       initialPosition = new Point(0, 0),
       size = 5,
       mass = Particle.DEFAULT_MASS,
-      initialVelocity = new ForceVector(0, 0)
+      initialVelocity = new ForceVector(0, 0),
     } = params;
     this._size = size;
     this.tint = params.tint || Particle.DEFAULT_TINT;
@@ -90,7 +90,7 @@ export class Particle extends PIXI.Sprite {
 
   public toParticlePositionObject = () => ({
     x: this.x,
-    y: this.y
+    y: this.y,
   });
 
   public getCenterPosition = (): Point =>

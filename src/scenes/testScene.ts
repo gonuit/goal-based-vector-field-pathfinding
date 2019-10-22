@@ -1,6 +1,6 @@
-import * as PIXI from "pixi.js";
-import { ParticleScene } from "../engine/particleScene";
-import { Scene, SceneConfig } from "../engine/scene";
+import * as PIXI from 'pixi.js';
+import { ParticleScene } from '../engine/particleScene';
+import { Scene, SceneConfig } from '../engine/scene';
 
 interface Scecon extends Scene {}
 
@@ -15,12 +15,12 @@ export class MainScene extends ParticleScene {
   preload = () => {};
 
   create = () => {
-    console.log("create");
+    console.log('create');
     const graphics = new PIXI.Graphics();
     graphics.beginFill(0xff3300);
     graphics.drawRect(50, 250, 100, 100);
     graphics.endFill();
-    const sprite = PIXI.Sprite.from("../assets/image/particle.png");
+    const sprite = PIXI.Sprite.from('../assets/image/particle.png');
     const sprite2 = new PIXI.Sprite(PIXI.Texture.WHITE);
 
     this.addChild(sprite);
@@ -28,7 +28,7 @@ export class MainScene extends ParticleScene {
   };
 
   update = () => {
-    console.log("HELLO MAIN SCENE");
+    console.log('HELLO MAIN SCENE');
   };
 
   unmount = () => {};

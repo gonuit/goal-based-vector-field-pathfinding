@@ -1,8 +1,8 @@
-import { Box, BoxRenderConfig } from "./box";
-import { Color } from "./color";
-import { Utils } from "./utils";
-import { Point } from "./point";
-import { Scene } from "../engine/scene";
+import { Box, BoxRenderConfig } from './box';
+import { Color } from './color';
+import { Utils } from './utils';
+import { Point } from './point';
+import { Scene } from '../engine/scene';
 
 interface BoardDimensions {
   horizontalBoxes: number;
@@ -68,8 +68,8 @@ export class Board {
       boxSize = 20,
       initAll = true,
       positionsToFill,
-      initialRendererConfig = { color: { r: 255, g: 0, b: 0, a: 0.3 } }
-    }: BoardConfig
+      initialRendererConfig = { color: { r: 255, g: 0, b: 0, a: 0.3 } },
+    }: BoardConfig,
   ) {
     this._scene = scene;
     this._rendererConfig = initialRendererConfig;
@@ -83,7 +83,7 @@ export class Board {
 
   private initBoxMap = ({
     initAll,
-    positionsToFill
+    positionsToFill,
   }: initBoxMapConfig): void => {
     const map = [];
     if (initAll) {
@@ -91,7 +91,7 @@ export class Board {
         map.push([]); // col array
         for (let row = 0; row < this._verticalBoxes; row++) {
           map[col].push(
-            new Box({ position: new Point(col, row), size: this._boxSize })
+            new Box({ position: new Point(col, row), size: this._boxSize }),
           );
         }
       }
@@ -120,7 +120,7 @@ export class Board {
   };
 
   private mapAllBox = (
-    callback: (item: Box | undefined, x: number, y: number) => Box | undefined
+    callback: (item: Box | undefined, x: number, y: number) => Box | undefined,
   ): void => {
     for (let col = 0; col < this.boxMap.length; col++) {
       for (let row = 0; row < this.boxMap[col].length; row++) {
@@ -143,7 +143,7 @@ export class Board {
       renderDistances = false,
       renderVectorLines = false,
       indicateBoardRefresh = false,
-      colorByDistance = false
+      colorByDistance = false,
     } = this._rendererConfig;
     let maxDistance: number;
     if (colorByDistance) maxDistance = this.getMaxDistance();
@@ -166,7 +166,7 @@ export class Board {
       box.render(this._scene, {
         color,
         renderDistances,
-        renderVectorLines
+        renderVectorLines,
       });
     });
     return this;
@@ -176,7 +176,7 @@ export class Board {
     const { x, y } = dimensions;
     return new Point(
       x === 0 ? 0 : Math.trunc(x / this._boxSize),
-      y === 0 ? 0 : Math.trunc(y / this._boxSize)
+      y === 0 ? 0 : Math.trunc(y / this._boxSize),
     );
   };
 
@@ -239,7 +239,7 @@ export class Board {
       leftTopChildren,
       leftBottomChildren,
       rightTopChildren,
-      rightBottomChildren
+      rightBottomChildren,
     ];
     return childrenNodes.filter(childrenNodes => childrenNodes);
   };
@@ -253,7 +253,7 @@ export class Board {
     if (!goalBox) {
       // TODO: fix error
       return;
-      throw new Error("Goal node does not exist");
+      throw new Error('Goal node does not exist');
     }
 
     goalBox.distance = Board.GOAL_DISTANCE;
@@ -270,17 +270,17 @@ export class Board {
 
   private calculateDistance = async (
     position: Point,
-    distance: number = Board.GOAL_DISTANCE
+    distance: number = Board.GOAL_DISTANCE,
   ) => {
     let childrenNodes: Array<Box> = this.getBoxChildrens(position).filter(
-      ({ visited }) => !visited
+      ({ visited }) => !visited,
     );
     while (childrenNodes.length > 0) {
       this.setDistances(childrenNodes, ++distance);
       let newChildrenNodes = [];
       childrenNodes.forEach(({ position }) => {
         newChildrenNodes = Utils.uniqueBoxArray(
-          newChildrenNodes.concat(this.getBoxChildrens(position))
+          newChildrenNodes.concat(this.getBoxChildrens(position)),
         );
       });
 
@@ -312,7 +312,7 @@ export class Board {
         right = fakeObject,
         top = fakeObject,
         topLeft = fakeObject,
-        topRight = fakeObject
+        topRight = fakeObject,
       }: NamedChildrens = this.getNamedChildrens(parentPosition);
       parent.forceVector.x = (left.distance - right.distance) * 0.25;
       parent.forceVector.y = (top.distance - bottom.distance) * 0.25;
@@ -349,7 +349,7 @@ export class Board {
             .flat()
             .some(
               boxToRemove =>
-                boxToRemove && box.position.equals(boxToRemove.position)
+                boxToRemove && box.position.equals(boxToRemove.position),
             )
         );
       })
@@ -360,7 +360,7 @@ export class Board {
       horizontalBoxes: this._horizontalBoxes,
       boxSize: this._boxSize,
       initAll: false,
-      positionsToFill: newBoxPositions
+      positionsToFill: newBoxPositions,
     });
   };
 
@@ -380,7 +380,7 @@ export class Board {
         array[firstItem + 2] = forceX;
         array[firstItem + 3] = forceY;
         i++;
-      }
+      },
     );
     return new Float64Array(array).buffer;
   };

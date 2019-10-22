@@ -1,4 +1,4 @@
-import { ForceVector } from "../objects/forceVector";
+import { ForceVector } from '../objects/forceVector';
 
 export interface ShallowBox {
   positionX: number;
@@ -62,18 +62,18 @@ export class WorkerShallowBoard {
         positionY,
         centerPositionX: positionX * this.boxSize + this.boxSize * 0.5,
         centerPositionY: positionY * this.boxSize + this.boxSize * 0.5,
-        forceVector: new ForceVector(forceX, forceY)
+        forceVector: new ForceVector(forceX, forceY),
       };
     }
   };
 
   public getBoxPositionByDimensions = (
     x: number,
-    y: number
+    y: number,
   ): { x: number; y: number } => {
     return {
       x: x === 0 ? 0 : Math.trunc(x / this._boxSize),
-      y: y === 0 ? 0 : Math.trunc(y / this._boxSize)
+      y: y === 0 ? 0 : Math.trunc(y / this._boxSize),
     };
   };
 
@@ -92,7 +92,7 @@ export class WorkerShallowBoard {
         y >= 0 &&
         this.shallowBoxMap.length > x &&
         this.shallowBoxMap[x].length > y &&
-        this.shallowBoxMap[x][y]
+        this.shallowBoxMap[x][y],
     );
 
   public get boxSize(): number {
@@ -104,7 +104,7 @@ export class WorkerShallowBoard {
 
   public getShallowNamedChildrens = (
     x: number,
-    y: number
+    y: number,
   ): ShallowNamedChildrens => {
     const shallowNamedChildrens: ShallowNamedChildrens = {};
     shallowNamedChildrens.left = this.getBoxByPosition(x - 1, y);

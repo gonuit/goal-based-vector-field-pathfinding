@@ -1,7 +1,7 @@
-import { Particles } from "./particleManager";
-import { Particle } from "./particle";
-import { PTMsgType } from "../workersObjects/PTMsgType";
-import { Board } from "./board";
+import { Particles } from './particleManager';
+import { Particle } from './particle';
+import { PTMsgType } from '../workersObjects/PTMsgType';
+import { Board } from './board';
 
 export interface ParticleThreadConfig {
   particles: Particles;
@@ -28,12 +28,12 @@ export class ParticleThread {
     const particlesArrayBuffer: ArrayBuffer = this.particlesToArrayBuffer();
     this._worker.postMessage(
       { buff: particlesArrayBuffer, validBoardBuffer, colisionBoardBuffer },
-      [particlesArrayBuffer, validBoardBuffer, colisionBoardBuffer]
+      [particlesArrayBuffer, validBoardBuffer, colisionBoardBuffer],
     );
   };
 
   private initListeners = () => {
-    this._worker.addEventListener("message", this.handleMessage);
+    this._worker.addEventListener('message', this.handleMessage);
   };
 
   private handleMessage = ({ data }: MessageEvent) => {
@@ -50,14 +50,14 @@ export class ParticleThread {
         return;
       }
       default: {
-        console.log("worker_message_data", new Float64Array(data.buff));
+        console.log('worker_message_data', new Float64Array(data.buff));
         return;
       }
     }
   };
 
   private updateParticleGameObjectsPositons = (
-    serializedParticles: Array<number>
+    serializedParticles: Array<number>,
   ) => {
     const length: number = serializedParticles[0];
     const offset = 1;
@@ -75,7 +75,7 @@ export class ParticleThread {
     const type = new Float64Array([PTMsgType.setVectors]).buffer;
     this._worker.postMessage({ buff: type, validBoardBuffer }, [
       validBoardBuffer,
-      type
+      type,
     ]);
   };
 

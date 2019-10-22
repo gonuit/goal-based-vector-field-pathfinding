@@ -1,5 +1,5 @@
-import * as PIXI from "pixi.js";
-import { Point } from "../objects/point";
+import * as PIXI from 'pixi.js';
+import { Point } from '../objects/point';
 
 interface ListenersConfig {
   withMouse?: boolean;
@@ -24,7 +24,7 @@ export class ParticleScene extends PIXI.ParticleContainer {
     name,
     maxParticleCount,
     properties,
-    withMouse = false
+    withMouse = false,
   }: ParticleSceneConfig) {
     super(maxParticleCount, properties);
     this._name = name;
@@ -36,7 +36,7 @@ export class ParticleScene extends PIXI.ParticleContainer {
   }
 
   protected input = {
-    mouse: { position: new Point(0, 0) }
+    mouse: { position: new Point(0, 0) },
   };
 
   public preload = () => {};
@@ -58,9 +58,9 @@ export class ParticleScene extends PIXI.ParticleContainer {
   };
 
   private _addListeners = ({ withMouse }: ListenersConfig) => {
-    const canvas = document.getElementById("game").firstElementChild;
+    const canvas = document.getElementById('game').firstElementChild;
 
     if (withMouse)
-      canvas.addEventListener("mousemove", this._handleMousePosition);
+      canvas.addEventListener('mousemove', this._handleMousePosition);
   };
 }

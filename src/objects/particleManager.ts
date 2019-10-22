@@ -1,10 +1,10 @@
-import * as PIXI from "pixi.js";
-import { Particle } from "./particle";
-import { Point } from "./point";
-import { Board } from "./board";
-import { Box } from "./box";
-import { ForceVector } from "./forceVector";
-import { ParticleScene } from "../engine/particleScene";
+import * as PIXI from 'pixi.js';
+import { Particle } from './particle';
+import { Point } from './point';
+import { Board } from './board';
+import { Box } from './box';
+import { ForceVector } from './forceVector';
+import { ParticleScene } from '../engine/particleScene';
 
 export interface Inaccuracy {
   min: number;
@@ -48,8 +48,8 @@ export class ParticleManager {
       colisionBoard,
       particleTexture,
       tint = ParticleManager.DEFAULT_TINT,
-      alpha = ParticleManager.DEFAULT_ALPHA
-    }: ParticleManagerConfig
+      alpha = ParticleManager.DEFAULT_ALPHA,
+    }: ParticleManagerConfig,
   ) {
     this._alpha = alpha;
     this._tint = tint;
@@ -62,11 +62,11 @@ export class ParticleManager {
     this._particleTexture = particleTexture;
     if (
       inaccuracy &&
-      (typeof inaccuracy.max != "number" ||
-        typeof inaccuracy.min != "number" ||
+      (typeof inaccuracy.max != 'number' ||
+        typeof inaccuracy.min != 'number' ||
         inaccuracy.max < inaccuracy.min)
     ) {
-      throw new Error("bad inaccuracy value");
+      throw new Error('bad inaccuracy value');
     }
     this._inaccuracy = inaccuracy;
     this.initManager();
@@ -78,15 +78,15 @@ export class ParticleManager {
       _initialPosition: initialPosition,
       _particleTexture: particleTexture,
       _tint: tint,
-      _alpha: alpha
+      _alpha: alpha,
     } = this;
     for (let i = 0; i < this._amount; i++) {
       const particle = new Particle({
         initialPosition,
         size,
         particleTexture,
-        tint: ('0x'+Math.floor(Math.random()*16777215).toString(16)) as any,
-        alpha
+        tint: ('0x' + Math.floor(Math.random() * 16777215).toString(16)) as any,
+        alpha,
       });
       this._particles.push(particle);
     }
@@ -100,9 +100,9 @@ export class ParticleManager {
       const boxUnderParticle: Box = board.getBoxByDimensions(new Point(x, y));
       if (!boxUnderParticle) {
         console.warn(
-          "Particle Manager:\n",
-          "Bad particle position\n",
-          "(Inert motion)"
+          'Particle Manager:\n',
+          'Bad particle position\n',
+          '(Inert motion)',
         );
         particle.moveByVelocity();
         return;
@@ -123,13 +123,13 @@ export class ParticleManager {
     this._particles.forEach(particle => {
       const centerParticlePosition = particle.getCenterPosition();
       const boxPosition = this._colisionBoard.getBoxPositionByDimensions(
-        new Point(centerParticlePosition.x, centerParticlePosition.y)
+        new Point(centerParticlePosition.x, centerParticlePosition.y),
       );
       const {
         right,
         left,
         bottom,
-        top
+        top,
       } = this._colisionBoard.getNamedChildrens(boxPosition);
       if (
         bottom &&
@@ -143,7 +143,7 @@ export class ParticleManager {
         particle.velocity = new ForceVector(
           particle.velocity.x,
           -particle.velocity.y *
-            ParticleManager.FORCE_PERCENTAGE_AFTER_COLLISION
+            ParticleManager.FORCE_PERCENTAGE_AFTER_COLLISION,
         );
       } else if (
         top &&
@@ -157,7 +157,7 @@ export class ParticleManager {
         particle.velocity = new ForceVector(
           particle.velocity.x,
           -particle.velocity.y *
-            ParticleManager.FORCE_PERCENTAGE_AFTER_COLLISION
+            ParticleManager.FORCE_PERCENTAGE_AFTER_COLLISION,
         );
       } else if (
         left &&
@@ -171,7 +171,7 @@ export class ParticleManager {
         particle.velocity = new ForceVector(
           -particle.velocity.x *
             ParticleManager.FORCE_PERCENTAGE_AFTER_COLLISION,
-          particle.velocity.y
+          particle.velocity.y,
         );
       } else if (
         right &&
@@ -185,7 +185,7 @@ export class ParticleManager {
         particle.velocity = new ForceVector(
           -particle.velocity.x *
             ParticleManager.FORCE_PERCENTAGE_AFTER_COLLISION,
-          particle.velocity.y
+          particle.velocity.y,
         );
       }
     });

@@ -1,9 +1,9 @@
-import * as PIXI from "pixi.js";
+import * as PIXI from 'pixi.js';
 
-import { Scene } from "./scene";
-import { Updater } from "./updater";
-import { ParticleScene } from "./particleScene";
-import { Point } from "../objects/point";
+import { Scene } from './scene';
+import { Updater } from './updater';
+import { ParticleScene } from './particleScene';
+import { Point } from '../objects/point';
 
 export interface SceneManagerConfig {}
 
@@ -12,10 +12,7 @@ export class SceneManager {
   private _currentScene: Scene | ParticleScene | undefined;
   private _updater: Updater;
   private _renderer: PIXI.Renderer;
-  constructor(
-    renderer: PIXI.Renderer,
-    config?: SceneManagerConfig
-  ) {
+  constructor(renderer: PIXI.Renderer, config?: SceneManagerConfig) {
     this._renderer = renderer;
     this._scenes = [];
     this._currentScene = undefined;
@@ -28,7 +25,7 @@ export class SceneManager {
 
   public start = (sceneName: string) => {
     const targetScene: Scene | ParticleScene = this._scenes.find(
-      (scene: Scene | ParticleScene) => scene.name === sceneName
+      (scene: Scene | ParticleScene) => scene.name === sceneName,
     );
     if (!targetScene)
       throw new Error(`Scene: "${sceneName}", does not exist in SceneManager`);

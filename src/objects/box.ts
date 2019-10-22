@@ -1,7 +1,7 @@
-import * as PIXI from "pixi.js";
-import { Point } from "./point";
-import { ForceVector } from "./forceVector";
-import { Scene } from "../engine/scene";
+import * as PIXI from 'pixi.js';
+import { Point } from './point';
+import { ForceVector } from './forceVector';
+import { Scene } from '../engine/scene';
 
 export interface BoxConfig {
   distance?: number;
@@ -39,7 +39,7 @@ export class Box {
     position,
     visited = false,
     size,
-    forceVector = new ForceVector(0, 0) // max value = 1 min = -1
+    forceVector = new ForceVector(0, 0), // max value = 1 min = -1
   }: BoxConfig) {
     this._size = size;
     this._forceVector = forceVector;
@@ -48,7 +48,7 @@ export class Box {
     this.position = position;
     this._boxCenterPosition = new Point(
       this.position.x * this._size + this._size * 0.5,
-      this.position.y * this._size + this._size * 0.5
+      this.position.y * this._size + this._size * 0.5,
     );
   }
 
@@ -131,7 +131,7 @@ export class Box {
 
   private renderBoxBackground(
     scene: Scene,
-    { color, alpha = 1 }: BoxRenderer
+    { color, alpha = 1 }: BoxRenderer,
   ): Box {
     if (this._rectangleObject) {
       this._rectangleObject.tint = color;
@@ -158,10 +158,10 @@ export class Box {
     if (!this._bitmapText) {
       this._bitmapText = new PIXI.BitmapText(this.distance.toString(), {
         font: {
-          name: "font",
-          size: 8
+          name: 'font',
+          size: 8,
         },
-        tint: 0xffffff
+        tint: 0xffffff,
       });
       const { x, y } = this._boxCenterPosition;
       this._bitmapText.x = x;
@@ -175,7 +175,7 @@ export class Box {
 
   private renderVectorLine = (
     scene: Scene,
-    { renderVectorLines }: BoxRenderer
+    { renderVectorLines }: BoxRenderer,
   ): Box => {
     if (!renderVectorLines) {
       this.removeGameObjectLineIfExist();
@@ -194,7 +194,7 @@ export class Box {
         .moveTo(0, 0)
         .lineTo(
           forceX * Box.FORCE_VECTOR_MULTIPIER,
-          forceY * Box.FORCE_VECTOR_MULTIPIER
+          forceY * Box.FORCE_VECTOR_MULTIPIER,
         );
       return this;
     }
@@ -206,13 +206,13 @@ export class Box {
       .moveTo(0, 0)
       .lineTo(
         forceX * Box.FORCE_VECTOR_MULTIPIER,
-        forceY * Box.FORCE_VECTOR_MULTIPIER
+        forceY * Box.FORCE_VECTOR_MULTIPIER,
       );
 
     scene.addChild(this._gameObjectLine);
 
     if (!this._gameObjectLineOriginDot) {
-      const sprite = PIXI.Sprite.from("../assets/image/particle.png");
+      const sprite = PIXI.Sprite.from('../assets/image/particle.png');
       sprite.position.set(x - 1, y);
       sprite.width = 3;
       sprite.height = 3;

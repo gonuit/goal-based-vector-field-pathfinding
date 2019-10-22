@@ -34,8 +34,7 @@ export class ForceVector {
     return this;
   };
 
-  public copy = (): ForceVector =>
-    new ForceVector(this.x, this.y);
+  public copy = (): ForceVector => new ForceVector(this.x, this.y);
 
   public multiplyBy = (number: number): ForceVector => {
     this.x *= number;
