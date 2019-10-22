@@ -2,10 +2,10 @@ import * as PIXI from 'pixi.js';
 import { Scene } from './engine/scene';
 import { MainScene } from './scenes/mainScene';
 import { SceneManager } from './engine/sceneManager';
-import { RendererOptions, WebGLRenderer, CanvasRenderer } from 'pixi.js';
+import { RendererOptions } from 'pixi.js';
 
 const config: PIXI.RendererOptions = {
-  antialias: true,
+  antialias: false,
   powerPreference: 'high-performance',
   transparent: true,
   width: 840,

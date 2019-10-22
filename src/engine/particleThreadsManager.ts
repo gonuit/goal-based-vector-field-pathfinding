@@ -1,6 +1,6 @@
-import { Board } from './board';
 import { ParticleManager, Particles } from './particleManager';
 import { ParticleThread } from './ParticleThread';
+import { Board } from '../objects/board';
 
 export interface ItemPosition {
   x: number;

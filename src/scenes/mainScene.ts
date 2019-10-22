@@ -3,9 +3,9 @@ import { ParticleScene, ParticleSceneConfig } from '../engine/particleScene';
 import { Point } from '../objects/point';
 import { Board } from '../objects/board';
 import { Statistics } from '../objects/statistics';
-import { ParticleThreadsManager } from '../objects/particleThreadsManager';
-import { ParticleManager } from '../objects/particleManager';
 import { Scene } from '../engine/scene';
+import { ParticleThreadsManager } from '../engine/particleThreadsManager';
+import { ParticleManager } from '../engine/particleManager';
 
 interface MainSceneConfig extends ParticleSceneConfig {}
 

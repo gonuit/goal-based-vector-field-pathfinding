@@ -1,10 +1,10 @@
 import * as PIXI from 'pixi.js';
-import { Particle } from './particle';
-import { Point } from './point';
-import { Board } from './board';
-import { Box } from './box';
-import { ForceVector } from './forceVector';
 import { ParticleScene } from '../engine/particleScene';
+import { Point } from '../objects/point';
+import { Board } from '../objects/board';
+import { Particle } from '../objects/particle';
+import { Box } from '../objects/box';
+import { ForceVector } from '../objects/forceVector';
 
 export interface Inaccuracy {
   min: number;

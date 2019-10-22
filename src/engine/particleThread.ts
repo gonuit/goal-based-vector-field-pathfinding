@@ -1,7 +1,7 @@
 import { Particles } from './particleManager';
-import { Particle } from './particle';
 import { PTMsgType } from '../workersObjects/PTMsgType';
-import { Board } from './board';
+import { Board } from '../objects/board';
+import { Particle } from '../objects/particle';
 
 export interface ParticleThreadConfig {
   particles: Particles;

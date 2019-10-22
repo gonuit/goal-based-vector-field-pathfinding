@@ -2,8 +2,8 @@ import * as PIXI from 'pixi.js';
 import { Point } from './point';
 import { ForceVector } from './forceVector';
 import { Utils } from './utils';
-import { Inaccuracy } from './particleManager';
 import { ParticleScene } from '../engine/particleScene';
+import { Inaccuracy } from '../engine/particleManager';
 
 export interface ParticleConfig {
   initialPosition?: Point;
