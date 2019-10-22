@@ -1,8 +1,8 @@
 import { Point } from '../objects/point';
 import { ForceVector } from '../objects/forceVector';
-import { Inaccuracy } from '../objects/particleManager';
 import { Utils } from '../objects/utils';
 import { WorkerShallowBoard } from './workerShallowBoard';
+import { Inaccuracy } from '../engine/particleManager';
 
 export interface ShallowParticleConfig {
   initialPosition?: Point;
@@ -16,7 +16,7 @@ export class ShallowParticle {
   private static PARTICLE_DISTANCE_AFTER_COLISION: number = 2;
   private static MAX_VELOCITY: number = 5;
   private static MAX_FORCE: number = 0.2;
-  private static MAX_SPEED: number = 3;
+  private static MAX_SPEED: number = 2;
   private static DEFAULT_MASS: number = 1.5;
   public x: number;
   public y: number;

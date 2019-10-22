@@ -6,20 +6,25 @@ import { Statistics } from '../objects/statistics';
 import { Scene } from '../engine/scene';
 import { ParticleThreadsManager } from '../engine/particleThreadsManager';
 import { ParticleManager } from '../engine/particleManager';
+import { TileMap } from '../engine/tileMap';
 
-interface MainSceneConfig extends ParticleSceneConfig {}
+interface MainSceneConfig extends ParticleSceneConfig {
+  tileMap: TileMap;
+}
 
 export class MainScene extends Scene {
   private static THREADS_COUNT: number = 2;
   private static PARTICLES_COUNT: number = 10000;
   private static MAX_PARTICLES_COUNT: number = 10000;
-  constructor({ name }: MainSceneConfig) {
+  private _tileMap: TileMap;
+  constructor({ name, tileMap }: MainSceneConfig) {
     super({
       name,
 
       withMouse: true,
     });
-    // TODO: Fix this thing
+    this._tileMap = tileMap;
+    // TODO: Fix needed
     this.particleScene = new ParticleScene({
       name: 'SUB_MAIN',
       maxParticleCount: MainScene.MAX_PARTICLES_COUNT,
@@ -59,8 +64,8 @@ export class MainScene extends Scene {
     this.isTrackingPaused = false;
     this.fieldSize = 40;
     this.ui = new Statistics(this);
-    this.horizontalBoxes = 21;
-    this.verticalBoxes = 21;
+    this.horizontalBoxes = this._tileMap.horizontalBoxes;
+    this.verticalBoxes = this._tileMap.verticalBoxes;
   };
 
   preload = async () => {
@@ -83,58 +88,7 @@ export class MainScene extends Scene {
       verticalBoxes: this.verticalBoxes,
       boxSize: this.fieldSize,
       initAll: false,
-      positionsToFill: [
-        ...this.initBoardBorders({
-          horizontalBoxes: this.horizontalBoxes,
-          verticalBoxes: this.verticalBoxes,
-        }),
-        new Point(9, 1),
-        new Point(9, 2),
-        new Point(9, 3),
-        new Point(9, 4),
-        new Point(9, 5),
-        new Point(9, 6),
-        new Point(9, 7),
-        new Point(9, 8),
-        new Point(9, 9),
-        new Point(9, 10),
-        new Point(9, 11),
-        new Point(9, 12),
-        new Point(9, 13),
-        new Point(9, 14),
-        new Point(9, 15),
-        new Point(9, 16),
-        new Point(9, 17),
-
-        new Point(13, 3),
-        new Point(13, 4),
-        new Point(13, 5),
-        new Point(13, 6),
-        new Point(13, 7),
-        new Point(13, 8),
-        new Point(13, 9),
-        new Point(13, 10),
-        new Point(13, 11),
-        new Point(13, 12),
-        new Point(13, 13),
-        new Point(13, 14),
-        new Point(13, 15),
-        new Point(13, 16),
-        new Point(13, 17),
-        new Point(13, 18),
-        new Point(13, 19),
-        new Point(13, 20),
-
-        new Point(16, 3),
-        new Point(17, 3),
-        new Point(18, 3),
-        new Point(19, 3),
-
-        new Point(13, 6),
-        new Point(14, 6),
-        new Point(15, 6),
-        new Point(16, 6),
-      ],
+      positionsToFill: this._tileMap.map,
     }).render();
 
     this.validBoard = new Board(this.stage, {
@@ -239,25 +193,6 @@ export class MainScene extends Scene {
     this.helpText.y = 810;
     this.helpText.zIndex = 50;
     this.stage.addChild(this.helpText);
-  };
-
-  private initBoardBorders = ({
-    horizontalBoxes,
-    verticalBoxes,
-  }: {
-    horizontalBoxes: number;
-    verticalBoxes: number;
-  }): Array<Point> => {
-    const tileMap: Array<Point> = [];
-    for (let i = 0; i < horizontalBoxes; i++) {
-      tileMap.push(new Point(i, 0));
-      tileMap.push(new Point(i, verticalBoxes - 1));
-    }
-    for (let i = 1; i < verticalBoxes - 1; i++) {
-      tileMap.push(new Point(0, i));
-      tileMap.push(new Point(horizontalBoxes - 1, i));
-    }
-    return tileMap;
   };
 
   private initEvents = () => {

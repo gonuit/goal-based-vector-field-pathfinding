@@ -3,6 +3,8 @@ import { Scene } from './engine/scene';
 import { MainScene } from './scenes/mainScene';
 import { SceneManager } from './engine/sceneManager';
 import { RendererOptions } from 'pixi.js';
+import { TileMap } from './engine/tileMap';
+import { DEFAULT_MAP } from './maps/defaultMap';
 
 const config: PIXI.RendererOptions = {
   antialias: false,
@@ -24,7 +26,14 @@ export class Game {
 
   initScene = () => {
     const sceneName: string = 'MAIN';
-    const scene: Scene = new MainScene({ name: sceneName });
+    const scene: Scene = new MainScene({
+      name: sceneName,
+      tileMap: new TileMap({
+        horizontalBoxes: 21,
+        verticalBoxes: 21,
+        map: DEFAULT_MAP,
+      }),
+    });
     this._sceneManager.addScene(scene);
     this._sceneManager.start(sceneName);
   };
