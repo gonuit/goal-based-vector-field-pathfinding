@@ -7,7 +7,7 @@ import { TileMap } from './engine/tileMap';
 import { DEFAULT_MAP } from './maps/defaultMap';
 
 const config: PIXI.RendererOptions = {
-  antialias: false,
+  antialias: true,
   powerPreference: 'high-performance',
   transparent: true,
   width: 840,
