@@ -14,7 +14,7 @@ interface MainSceneConfig extends ParticleSceneConfig {
 
 export class MainScene extends Scene {
   private static THREADS_COUNT: number = 2;
-  private static PARTICLES_COUNT: number = 10000;
+  private static PARTICLES_COUNT: number = 2000;
   private static MAX_PARTICLES_COUNT: number = 10000;
   private _tileMap: TileMap;
   constructor({ name, tileMap }: MainSceneConfig) {
