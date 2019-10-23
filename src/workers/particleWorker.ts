@@ -27,7 +27,7 @@ class ParticleWorker {
       this._particles.push(
         new ShallowParticle({
           initialPosition: new Point(x, y),
-          mass: Utils.getRandomFloat(0.9, 1.7),
+          mass: Utils.getRandomFloat(1, 3.5),
           initialVelocity: new ForceVector(
             Utils.getRandomFloat(-2, 2),
             Utils.getRandomFloat(-2, 2),
@@ -81,13 +81,15 @@ class ParticleWorker {
         //   'Bad particle position\n',
         //   '(Inert motion)',
         // );
-        particle.moveByVelocity();
+        particle.x = 100;
+        particle.y = 100;
+        particle.velocity = new ForceVector(0, 0);
       } else {
         particle
           .setVelocity(boxUnderParticle.forceVector)
-          .checkColisions(this._colisionBoard)
-          .moveWithInaccuracyByVelocity({ min: 0.5, max: 1 });
-        // particle.moveByVelocity();
+          .checkColisions(this._colisionBoard);
+        // .moveWithInaccuracyByVelocity({ min: 0.5, max: 1 });
+        particle.moveByVelocity();
       }
     }
     // this.checkColisions();
