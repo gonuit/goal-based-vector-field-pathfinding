@@ -10,24 +10,42 @@ import { TileMap } from '../engine/tileMap';
 
 interface MainSceneConfig extends ParticleSceneConfig {
   tileMap: TileMap;
+  threadsCount?: number;
+  particlesCount?: number;
+  maxParticlesCount?: number;
 }
 
+const THREADS_COUNT: number = 2;
+const PARTICLES_COUNT: number = 2000;
+const MAX_PARTICLES_COUNT: number = 10000;
+
 export class MainScene extends Scene {
-  private static THREADS_COUNT: number = 2;
-  private static PARTICLES_COUNT: number = 2000;
-  private static MAX_PARTICLES_COUNT: number = 10000;
+  private threadsCount: number;
+  private particlesCount: number;
+  private maxParticlesCount: number;
   private _tileMap: TileMap;
-  constructor({ name, tileMap }: MainSceneConfig) {
+  constructor({
+    name,
+    tileMap,
+    maxParticlesCount = MAX_PARTICLES_COUNT,
+    threadsCount = THREADS_COUNT,
+    particlesCount = PARTICLES_COUNT,
+  }: MainSceneConfig) {
     super({
       name,
 
       withMouse: true,
     });
+
+    this.maxParticlesCount = maxParticlesCount;
+    this.threadsCount = threadsCount;
+    this.particlesCount = particlesCount;
+
     this._tileMap = tileMap;
     // TODO: Fix needed
     this.particleScene = new ParticleScene({
       name: 'SUB_MAIN',
-      maxParticleCount: MainScene.MAX_PARTICLES_COUNT,
+      maxParticleCount: this.maxParticlesCount,
       withMouse: false,
     });
     this.particleScene.visible = true;
@@ -104,7 +122,7 @@ export class MainScene extends Scene {
     };
 
     this.particleManager = new ParticleManager(this.particleScene, {
-      amount: MainScene.PARTICLES_COUNT,
+      amount: this.particlesCount,
       inaccuracy: { min: 0.5, max: 1 },
       initialPosition: new Point(100, 100),
       colisionBoard: this.colisionBoard,
@@ -117,7 +135,7 @@ export class MainScene extends Scene {
       board: this.validBoard,
       colisionBoard: this.colisionBoard,
       particleManager: this.particleManager,
-      numberOfThreads: MainScene.THREADS_COUNT,
+      numberOfThreads: this.threadsCount,
     });
 
     this.initText();
@@ -162,9 +180,9 @@ export class MainScene extends Scene {
 
   private initText = () => {
     this.info = new PIXI.BitmapText(
-      `Threads: ${
-        this.isSingleThread ? 1 : MainScene.THREADS_COUNT + 1
-      } Particles: ${MainScene.PARTICLES_COUNT}`,
+      `Threads: ${this.isSingleThread ? 1 : this.threadsCount + 1} Particles: ${
+        this.particlesCount
+      }`,
       {
         font: { name: 'font', size: 11 },
         tint: 0x000000,

@@ -33,6 +33,8 @@ export class Game {
         verticalBoxes: 21,
         map: DEFAULT_MAP,
       }),
+      particlesCount: 4_000,
+      threadsCount: 3,
     });
     this._sceneManager.addScene(scene);
     this._sceneManager.start(sceneName);
